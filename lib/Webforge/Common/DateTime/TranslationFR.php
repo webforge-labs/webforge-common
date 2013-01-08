@@ -3,7 +3,7 @@
 namespace Webforge\Common\DateTime;
 
 /**
- * Alle Abbrevations nochmal checken!
+ * @todo check abbrevations
  */
 class TranslationFR extends Translation  {
 
