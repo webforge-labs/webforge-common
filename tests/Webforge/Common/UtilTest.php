@@ -40,6 +40,14 @@ class UtilTest extends TestCase {
     );
     
     $tests[] = array(
+      true
+    );
+
+    $tests[] = array(
+      false
+    );
+    
+    $tests[] = array(
       0.17
     );
     
@@ -47,6 +55,7 @@ class UtilTest extends TestCase {
       new TestValueObject('v1', 'v2')
     );
     
+    // how can we create a resource type simple?
     
     return $tests;
   }

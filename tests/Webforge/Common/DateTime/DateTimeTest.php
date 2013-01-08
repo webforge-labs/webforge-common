@@ -2,7 +2,58 @@
 
 namespace Webforge\Common\DateTime;
 
+/**
+ * put test data into testdata repository
+ */
 class DateTimeTest extends \Webforge\Common\TestCase {
+  
+  /**
+   * @dataProvider i18nFormats
+   */
+  public function testI18nFormat($expectedFormat, $date, $formatString, $lang = 'en') {
+    $this->assertEquals($expectedFormat, $date->i18n_format($formatString, $lang));
+  }
+  
+  public function i18nFormats() {
+    $tests = array();
+    
+    // in php this is the three chars abbrev!
+    // there is no abbrev for 2 digits
+    $tests[] = array('Mo', new DateTime('21.03.2011'), 'D');
+    $tests[] = array('Tu', new DateTime('22.03.2011'), 'D');
+    $tests[] = array('We', new DateTime('23.03.2011'), 'D');
+    $tests[] = array('Th', new DateTime('24.03.2011'), 'D');
+    $tests[] = array('Fr', new DateTime('25.03.2011'), 'D');
+    $tests[] = array('Sa', new DateTime('26.03.2011'), 'D');
+    $tests[] = array('Su', new DateTime('27.03.2011'), 'D');
+
+    $tests[] = array('Monday',    new DateTime('21.03.2011'), 'l');
+    $tests[] = array('Tuesday',   new DateTime('22.03.2011'), 'l');
+    $tests[] = array('Wednesday', new DateTime('23.03.2011'), 'l');
+    $tests[] = array('Thursday',  new DateTime('24.03.2011'), 'l');
+    $tests[] = array('Friday',    new DateTime('25.03.2011'), 'l');
+    $tests[] = array('Saturday',  new DateTime('26.03.2011'), 'l');
+    $tests[] = array('Sunday',    new DateTime('27.03.2011'), 'l');
+
+    $tests[] = array('Mo', new DateTime('21.03.2011'), 'D', 'de');
+    $tests[] = array('Di', new DateTime('22.03.2011'), 'D', 'de');
+    $tests[] = array('Mi', new DateTime('23.03.2011'), 'D', 'de');
+    $tests[] = array('Do', new DateTime('24.03.2011'), 'D', 'de');
+    $tests[] = array('Fr', new DateTime('25.03.2011'), 'D', 'de');
+    $tests[] = array('Sa', new DateTime('26.03.2011'), 'D', 'de');
+    $tests[] = array('So', new DateTime('27.03.2011'), 'D', 'de');
+
+    $tests[] = array('Montag',    new DateTime('21.03.2011'), 'l', 'de');
+    $tests[] = array('Dienstag',  new DateTime('22.03.2011'), 'l', 'de');
+    $tests[] = array('Mittwoch',  new DateTime('23.03.2011'), 'l', 'de');
+    $tests[] = array('Donnerstag',new DateTime('24.03.2011'), 'l', 'de');
+    $tests[] = array('Freitag',   new DateTime('25.03.2011'), 'l', 'de');
+    $tests[] = array('Samstag',   new DateTime('26.03.2011'), 'l', 'de');
+    $tests[] = array('Sonntag',   new DateTime('27.03.2011'), 'l', 'de');
+    
+    return $tests;
+  }
+  
     
   public function testYesterday() {
     $now = time();

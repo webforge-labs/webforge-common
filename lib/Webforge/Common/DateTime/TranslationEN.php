@@ -38,7 +38,7 @@ class TranslationEN extends Translation  {
     4=>'Th',
     5=>'Fr',
     6=>'Sa',
-    0=>'So',
+    0=>'Su',
   );
 
   public $monthsAbbrev = array(
