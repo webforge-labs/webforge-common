@@ -20,14 +20,94 @@ class JSONConverterTest extends \Webforge\Common\TestCase {
   /**
    * @dataProvider data2json
    */
-  public function testStringifyConvertsStructuresToJSOn($data) {
-    $jsonEncoded = json_encode($data);
-    
+  public function testStringifyConvertsStructuresToJSOn($data, $jsonEncoded) {
     $this->assertJsonStringEqualsJsonString(
       $jsonEncoded,
       $this->converter->stringify($data)
     );
+  }
+  
+  /**
+   * @dataProvider data2json
+   */
+  public function testParseConvertsJSONToStructures($data, $jsonEncoded) {
+    $this->assertEquals(
+      $data,
+      $this->converter->parse($jsonEncoded)
+    );
+  }
+  
+  public static function data2json() {
+    $tests = array();
+    
+    $test = function ($data) use (&$tests) {
+      $tests[] = array($data, json_encode($data));
+    };
+    
+    $test(
+      array()
+    );
 
+    $test(
+      new stdClass
+    );
+    
+    $test(
+       array (
+         0 =>
+         (object)array(
+            'label' => 'Tag: Russland',
+            'value' => 1,
+            'tci' =>
+           (object)array(
+              'identifier' => 1,
+              'id' => 'entities-tag-1-form',
+              'label' => 'Tag: Russland',
+              'fullLabel' => 'Tag: Russland',
+              'drag' => false,
+              'type' => 'entities-tag',
+              'url' => NULL,
+          )
+        )
+      )
+    );
+    
+    return $tests;
+  }
+  
+  public function testParseFileDecodesTheContentsOfAJSONFile() {
+    $jsonFile = $this->getFile('some.json');
+    
+    // thats really stupid, because this is exactly the same code as in the lib
+    // aquivalent would be to mock the file.. hmm
+    $this->assertEquals(
+      json_decode($jsonFile->getContents()),
+      $this->converter->parseFile($jsonFile)
+    );
+  }
+  
+  public function testWrongJSONTHrowsAJSONParsingException() {
+    $this->setExpectedException('Webforge\Common\JS\JSONParsingException');
+    $this->converter->parse('[erroneous');
+  }
+
+  public function testParseThrowsExceptionWhenEmptyAsserted() {
+    $this->setExpectedException('Webforge\Common\JS\JSONParsingException');
+    
+    $this->converter->parse('[]', 0);
+  }
+
+  public function testParseThrowsNOExceptionWhenEmptyAsserted_AndJSONNotEmpty() {
+    $this->assertEquals(
+      array('not empty'),
+      $this->converter->parse('["not empty"]', 0)
+    );
+  }
+  
+  /**
+   * @dataProvider data2json
+   */
+  public function testPrettyPrintDoesOnlyReformatting($data, $jsonEncoded) {
     $this->assertJsonStringEqualsJsonString(
       $jsonEncoded,
       $this->converter->stringify($data, JSONConverter::PRETTY_PRINT)
@@ -35,22 +115,8 @@ class JSONConverterTest extends \Webforge\Common\TestCase {
 
     $this->assertJsonStringEqualsJsonString(
       $jsonEncoded,
-      $this->converter->prettyPrint($data)
-    );
-  }
-  
-  public static function data2json() {
-    $tests = array();
-    
-    $tests[] = array(
-      array(),
-    );
-
-    $tests[] = array(
-      new stdClass,
-    );
-    
-    return $tests;
+      $this->converter->prettyPrint($jsonEncoded)
+    );    
   }
 }
 ?>
