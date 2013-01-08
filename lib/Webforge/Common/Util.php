@@ -78,7 +78,7 @@ class Util {
     $string = gettype($var);
     
     if ($string == 'object') {
-      $string .= ' ('.self::getClass($var).')';
+      $string .= ' ('.get_class($var).')';
     }
 
     if ($string == 'array') {
