@@ -2,7 +2,9 @@
 
 namespace Webforge\Common;
 
-class ExceptionTest extends \Webforge\Code\Test\Base {
+use PHPUnit_Framework_TestCase;
+
+class ExceptionTest extends PHPUnit_Framework_TestCase {
   
   public function setUp() {
     $this->e = new Exception('this is the #1 exception', 0);
@@ -10,12 +12,29 @@ class ExceptionTest extends \Webforge\Code\Test\Base {
     $this->nested = new Exception('this is the #2 exception', 0, $this->e);
   }
   
-  public function testExceptionTestContainsException1() {
+  public function testExceptionTextContainsException1() {
     $text = $this->e->toString('text');
     $this->assertContains('this is the #1 exception', $text);
   }
+
+  public function testExceptionTextContainsException1_inHTML() {
+    $html = $this->e->toString('html');
+    $this->assertContains('this is the #1 exception', $html);
+    $this->assertContains('<b>Fatal Error:</b>', $html);
+  }
+
+  public function testExceptionTextPathsGetReplacedWhenRelativeDirIsGiven() {
+    try {
+      // the exception must come from this file
+      $this->throwIt();
+      
+    } catch (Exception $ex) {
+      $text = $ex->toString('text', __DIR__, 'replacedDir');
+      $this->assertContains('{replacedDir}', $text);
+    }
+  }
   
-  public function testExceptionTestContainsException1And2ForNested() {
+  public function testExceptionTextContainsException1And2ForNested() {
     $text = $this->nested->toString('text');
     
     $this->assertContains('this is the #1 exception', $text);
@@ -44,5 +63,8 @@ class ExceptionTest extends \Webforge\Code\Test\Base {
     $this->assertContains('[verbose info] this is the #1 exception', $text);
   }
   
+  public function throwIt() {
+    throw new Exception('this is the #1 exception', 0);
+  }
 }
 ?>
