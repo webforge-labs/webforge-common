@@ -1,0 +1,24 @@
+{
+  "name": "webforge/common",
+  "type": "library",
+  "description": "Boilerplate for Webforge and Psc - CMS",
+  "keywords": ["framework"],
+  "homepage": "http://github.com/pscheit/webforge-common",
+  "license": "LGPL",
+  "authors": [
+    {"name": "Philipp Scheit", "email": "p.scheit@ps-webforge.com"}
+  ],
+  "require": {
+    "php": ">=5.3.2",
+    "ext-mbstring": "*",
+    
+    "symfony/console": "2.1.*"
+  },
+  "require-dev": {
+    "webforge/webforge": "dev-master",
+  },
+  "autoload": {
+    "psr-0": {"Webforge\\Common": ["lib", "tests"]}
+  },
+  "minimum-stability": "dev"
+}
