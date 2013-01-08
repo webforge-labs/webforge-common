@@ -30,7 +30,7 @@ class Util {
     } elseif ($var instanceof Info) {
       return $var->getVarInfo();
     } elseif ($var instanceof \stdClass) {
-      return '(object) '.str_replace("\n",' ',\Psc\Doctrine\Helper::getDump($var,4));
+      return '(object) '.json_encode($var);
     } elseif (is_object($var)) {
       return sprintf('%s(%s)', method_exists($var, '__toString') ? $var->__toString() : 'not converted to string', self::typeInfo($var));
     } elseif (is_bool($var)) {

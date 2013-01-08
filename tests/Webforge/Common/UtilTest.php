@@ -12,6 +12,13 @@ class UtilTest extends TestCase {
   public function testTypeInfoAcceptance($typeSample) {
     $this->assertNotEmpty(Util::typeInfo($typeSample));
   }
+
+  /**
+   * @dataProvider provideAllTypes
+   */
+  public function testVarInfoAcceptance($typeSample) {
+    $this->assertNotEmpty(Util::varInfo($typeSample));
+  }
   
   public function provideAllTypes() {
     $tests = array();
