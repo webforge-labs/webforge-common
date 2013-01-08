@@ -11,7 +11,7 @@
          bootstrap="./bootstrap.php"
 >
     <testsuites>
-        <testsuite name="Webforge">
+        <testsuite name="Webforge Common">
             <directory suffix="Test.php">./tests/Webforge</directory>
         </testsuite>
     </testsuites>
