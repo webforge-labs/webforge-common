@@ -642,7 +642,6 @@ class Dir {
   /**
    * Copies all Files *in* $this to $destination
    * 
-   * Kopiert ein Verzeichnis mit allen Dateien und Unterverzeichnissen in ein neues Verzeichnis
    * @param Dir $destination
    * @chainable
    */

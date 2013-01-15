@@ -16,9 +16,10 @@ class String {
    * 
    * @param string $string 
    * @param string $prefix
+   * @return bool
    */
   public static function startsWith($string, $prefix) {
-    return (mb_strpos($string,$prefix) === 0);
+    return (mb_strpos($string, $prefix) === 0);
   }
 
   /**

@@ -6,11 +6,25 @@ use Webforge\Common\String AS S;
 use PHPUnit_Framework_TestCase;
 
 class StringTest extends PHPUnit_Framework_TestCase {
+  
+  public function testStartsWithChecksIfStringStartsWithPrefix() {
+    $string = 'EnvironmentEncoding';
+    $prefix = 'Environment';
+    
+    $this->assertTrue(S::startsWith($string, $prefix));
+  }
+
+  public function testStartsWithChecksIfStringStartNOTWithPrefix() {
+    $string = 'EnvironmentEncoding';
+    $prefix = 'other';
+    
+    $this->assertFalse(S::startsWith($string, $prefix));
+  }
+  
 
   public function testEnvironmentMbStringInternalEncodingIsUTF8() {
     $this->assertEquals('UTF-8', ini_get('mbstring.internal_encoding'), 'mbstring.internal_encoding is set to wrong value');
   }
-
 
   public function testIndent() {
     
