@@ -12,7 +12,8 @@
     "php": ">=5.3.2",
     "ext-mbstring": "*",
     
-    "symfony/console": "2.1.*@stable"
+    "symfony/console": "2.1.*@stable",
+    "symfony/process": "2.1.*@stable"
   },
   "require-dev": {
   },
