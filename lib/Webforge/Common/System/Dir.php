@@ -742,7 +742,7 @@ class Dir {
 
 
   /**
-   * Copy all files from this dir into another
+   * Copy all files (just the files) from this dir into another
    *
    * wenn flat = TRUE ist, werden auch Unterverzeichnisse durchsucht. dies "flatted" die Files dann into $destination
    */
