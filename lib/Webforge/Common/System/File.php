@@ -368,7 +368,7 @@ class File {
     else
       return $this->name;
   }
-
+  
   /**
    * Sets the directory of the file
    * @param Dir $directory
@@ -522,6 +522,10 @@ class File {
   public function getURL(Dir $relativeDir = NULL) {
     // rtrim entfernt den TrailingSlash der URL (der eigentlich nie da sein sollte, außer falls directoryURL nur "/" ist)
     return rtrim($this->directory->getURL($relativeDir),'/').'/'.rawurlencode($this->getName(self::WITH_EXTENSION));
+  }
+  
+  public function getHTMLEscapedUrl(Dir $relativeDir = NULL) {
+    return rtrim($this->directory->getURL($relativeDir),'/').'/'.\Psc\HTML\HTML::esc(rawurlencode($this->getName(self::WITH_EXTENSION)));
   }
   
   /**
