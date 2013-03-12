@@ -69,6 +69,14 @@ class DateTime extends \DateTime {
   public static function now(DateTimeZone $object = NULL) {
     return new static(time(),$object);
   }
+
+  public static function createFromJSON($json) {
+    return self::parse('Y-m-d H:i:s', $json->date, new DateTimeZone($json->timezone));
+  }
+
+  public static function createFromMysql($string, DateTimeZone $timezone = NULL) {
+    return self::parse('Y-m-d H:i:s', $string, $timezone);
+  }
   
   /**
    * @return bool
@@ -115,9 +123,6 @@ class DateTime extends \DateTime {
     return DateInterval::createFromDateInterval(parent::diff($object, $absolute));
   }
   
-  public static function createFromJSON($json) {
-    return self::parse('Y-m-d H:i:s', $json->date, new DateTimeZone($json->timezone));
-  }
   
   /**
    * Parsed einen String und gibt ein DateTime Objekt zurück
