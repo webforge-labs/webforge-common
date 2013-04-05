@@ -2,6 +2,8 @@
 
 namespace Webforge\Common;
 
+use Webforge\Common\ArrayUtil as A;
+
 class Util {
   
   const INFO_PLAIN_ARRAY = 'plain_array';
@@ -21,12 +23,17 @@ class Util {
     $type = self::getType($var);
     
     if ($type == 'string') {
-      return sprintf('string(%d) "%s"',
-                     mb_strlen($var),
-                     (string) $var
-                     );
+      return sprintf(
+        'string(%d) "%s"',
+        mb_strlen($var),
+        (string) $var
+      );
     } elseif ($type == 'array') {
-      return sprintf('%s %s',self::typeInfo($var), preg_replace('/\s+/',' ',mb_substr(str_replace("\n",'',print_r($var,true)),5)));
+      return sprintf('array(%s)', 
+        A::implode($var, ', ',function ($item) {
+          return Util::varInfo($item);
+        })
+      );
     } elseif ($var instanceof Info) {
       return $var->getVarInfo();
     } elseif ($var instanceof \stdClass) {

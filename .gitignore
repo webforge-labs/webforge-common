@@ -2,3 +2,5 @@
 /webforge-common.komodoproject
 /build/coverage
 /composer.lock
+
+/webforge-common.sublime-workspace
