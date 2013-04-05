@@ -137,6 +137,7 @@ class File {
    * 
    * @param string $contents
    * @param int $flags File::EXCLUSIVE
+   * @chainable
    */
   public function writeContents($contents, $flags = NULL) {
     if ($this->exists() && !$this->isWriteable()) {
@@ -166,7 +167,7 @@ class File {
     }
     $this->sha1 = NULL;
     
-    return $ret;
+    return $this;
   }
   
   /**
