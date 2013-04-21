@@ -71,7 +71,11 @@ class DateTime extends \DateTime {
   }
 
   public static function createFromJSON($json) {
-    return self::parse('Y-m-d H:i:s', $json->date, new DateTimeZone($json->timezone));
+    if (is_numeric($json->date)) {
+      return self::parse('U', (int) $json->date, new DateTimeZone($json->timezone));
+    } else {
+      return self::parse('Y-m-d H:i:s', $json->date, new DateTimeZone($json->timezone));
+    }
   }
 
   public static function createFromMysql($string, DateTimeZone $timezone = NULL) {
@@ -249,9 +253,10 @@ class DateTime extends \DateTime {
   }
   
   public function export() {
-    return (object) array('date'=>$this->format('U'),
-                 'timezone'=>$this->getTimezone()->getName()
-                );
+    return (object) array(
+      'date'=>$this->format('U'),
+      'timezone'=>$this->getTimezone()->getName()
+    );
   }
   
   public static function import(\stdClass $o) {
