@@ -147,6 +147,12 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('->eins<- ->zwei<- ->drei<- ', A::joinc($array, '->%s<- '));
   }
 
+  public function testJoinWithInnerArrays() {
+    $array = array('one', array('thatsbad'), 'three');
+
+    $this->assertEquals('|one| |Array| |three| ', A::join($array, '|%s| '));
+  }
+
   public function testImplode_normal() {
     $array = array(array(0=>'eins'),array(0=>'zwei'),array(0=>'drei'));
     

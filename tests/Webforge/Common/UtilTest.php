@@ -59,6 +59,4 @@ class UtilTest extends TestCase {
     
     return $tests;
   }
-  
 }
-?>

@@ -10,7 +10,7 @@ class ArrayUtil {
   const END = 'end_of_array';
   
   /**
-   * Fügt einen Array zu einem String zusammen
+   * Joins an array to string
    * 
    * Aus einem Array ein geschriebenes Array machen:
    * print '$GLOBALS'.A::join(array('conf','default','db'), "['%s']");
@@ -23,7 +23,9 @@ class ArrayUtil {
   public static function join(Array $pieces, $glue) {
     $s = NULL;
     foreach ($pieces as $key =>$piece) {
-      $s .= sprintf($glue,$piece,$key);
+      if (is_array($piece)) $piece = 'Array';
+
+      $s .= sprintf($glue, $piece, $key);
     }
     return $s;
   }

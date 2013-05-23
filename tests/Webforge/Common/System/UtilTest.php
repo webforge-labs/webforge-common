@@ -4,8 +4,6 @@ namespace Webforge\Common\System;
 
 class UtilTest extends \Webforge\Common\TestCase {
   
-  
-  
   public function setUp() {
     $this->chainClass = 'Webforge\\Common\\System\\Util';
     parent::setUp();
@@ -21,4 +19,3 @@ class UtilTest extends \Webforge\Common\TestCase {
     $this->assertStringStartsWith('PHP '.$v, $output[0], 'should find a PHP '.$v.' Interpreter');
   }
 }
-?>
