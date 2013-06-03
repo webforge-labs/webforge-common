@@ -290,14 +290,14 @@ class ArrayUtil {
   public static function pluck(Array $items, $property) {
     $props = array();
     
-    if (count($items) === 0) {
-      return $props;
+    if (count($items) > 0) {
+      $get = Util::castGetterFromSample($property, current($items));
+
+      foreach ($items as $key=>$item) {
+        $props[$key] = $get($item);
+      }
     }
-    
-    $get = Util::castGetterFromSample($property, current($items));
-    foreach ($items as $key=>$item) {
-      $props[$key] = $get($item);
-    }
+
     return $props;
   }
   
