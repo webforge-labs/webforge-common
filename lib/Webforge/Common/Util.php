@@ -3,6 +3,8 @@
 namespace Webforge\Common;
 
 use Webforge\Common\ArrayUtil as A;
+use Doctrine\Common\Collections\Collection;
+use Traversable;
 
 class Util {
   
@@ -125,5 +127,17 @@ class Util {
     }
     
     return $getter;
+  }
+
+  /**
+   * @param array|Traversable|mixed $collection
+   * @return array
+   */
+  public static function castArray($collection) {
+    if ($collection instanceof Collection) {
+      return $collection->toArray();
+    }
+    
+    return (array) $collection; // fastcheck
   }
 }

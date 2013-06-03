@@ -18,7 +18,7 @@
   "require-dev": {
   },
   "autoload": {
-    "psr-0": {"Webforge\\Common": ["lib", "tests"]}
+    "psr-0": {"Webforge\\Common": ["lib/", "tests/"]}
   },
   "minimum-stability": "dev",
   "extra": {

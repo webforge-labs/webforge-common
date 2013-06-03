@@ -3,9 +3,14 @@
 namespace Webforge\Common;
 
 use stdClass;
+use ArrayIterator;
 
 class UtilTest extends TestCase {
   
+  public function testTraversablePreCondition() {
+    $this->assertInstanceOf('Traversable', new ArrayIterator(array(1,2,3)));
+  }
+
   /**
    * @dataProvider provideAllTypes
    */
@@ -57,6 +62,30 @@ class UtilTest extends TestCase {
     
     // how can we create a resource type simple?
     
+    return $tests;
+  }
+
+
+  /**
+   * @dataProvider provideCastArray
+   */
+  public function testCastArray($item, $expected) {
+    $this->assertEquals(
+      $expected, 
+      Util::castArray($item)
+    );
+  }
+
+  public static function provideCastArray() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $test($iterator = new ArrayIterator(array(1, 2, 3)), array(1,2,3));
+    $test(array(1,2,3), array(1, 2, 3));
+  
     return $tests;
   }
 }
