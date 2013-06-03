@@ -82,9 +82,10 @@ class UtilTest extends TestCase {
     $test = function() use (&$tests) {
       $tests[] = func_get_args();
     };
-  
+
     $test($iterator = new ArrayIterator(array(1, 2, 3)), array(1,2,3));
     $test(array(1,2,3), array(1, 2, 3));
+    $test(new TraversableCollection(array('0'=>'nil', '1'=>'one')), array('0'=>'nil', '1'=>'one'));
   
     return $tests;
   }

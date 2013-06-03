@@ -5,6 +5,7 @@ namespace Webforge\Common;
 use Webforge\Common\ArrayUtil as A;
 use Doctrine\Common\Collections\Collection;
 use Traversable;
+use IteratorAggregate;
 
 class Util {
   
@@ -136,8 +137,12 @@ class Util {
   public static function castArray($collection) {
     if ($collection instanceof Collection) {
       return $collection->toArray();
+    } elseif (is_array($collection)) {
+      return $collection;
+    } elseif ($collection instanceof Traversable) {
+      return iterator_to_array($collection);
+    } else {
+      return (array) $collection;
     }
-    
-    return (array) $collection; // fastcheck
   }
 }
