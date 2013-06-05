@@ -16,6 +16,7 @@
     "symfony/process": "2.1.*@stable"
   },
   "require-dev": {
+    "webforge/testplate": "1.2.*@dev"
   },
   "autoload": {
     "psr-0": {"Webforge\\Common": ["lib/", "tests/"]}
