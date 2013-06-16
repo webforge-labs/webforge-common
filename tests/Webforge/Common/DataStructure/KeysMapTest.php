@@ -34,6 +34,10 @@ class KeysMapTest extends \Webforge\Code\Test\Base {
     );
   }
 
+  public function testCanBeInitEmpty() {
+    $this->assertChainable(new KeysMap());
+  }
+
   /**
    * @dataProvider provideGetsWithoutDefault
    */
@@ -101,13 +105,22 @@ class KeysMapTest extends \Webforge\Code\Test\Base {
 
   public function testThrowsExceptionForNonExistantKEysByDefault() {
     $this->setExpectedException($this->keysException);
-    $this->throwMap->get('undefined');
+
+    try {
+
+      $this->throwMap->get('undefined');
+    } catch (\Exception $e) {
+      if ($e instanceof $this->keysException) {
+        $this->assertEquals(array('undefined'), $e->getKeys());
+      }
+      throw $e;
+    }
   }
+
 
   public function testThrowsExceptionForNonExistanceKeyIfDO_THROW_EXCEPTION_ConstantIsSetAsDefault() {
     $this->setExpectedException($this->keysException);
     $this->throwMap->get('undefined', KeysMap::DO_THROW_EXCEPTION);
-
   }
 
   /**
@@ -181,13 +194,44 @@ class KeysMapTest extends \Webforge\Code\Test\Base {
     $this->assertEquals($replacement, $this->map->toArray());
   }
   
-  public function testSetChangesValueWithFullPath() {
+  /**
+   * @dataProvider provideSets
+   */
+  public function testSetChangesValueWithFullPath($keys, $newValue) {
     $this->map->set(
-      $keys = array('key1', 'values', 'v1'), 
-      $newValue = 'new v1'
+      $keys, 
+      $newValue
     );
 
     $this->assertEquals($newValue, $this->map->get($keys));
+  }
+
+  public static function provideSets() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+
+    // creates
+    $test(
+      array('undefined'),
+      FALSE
+    );
+
+    // overrides
+    $test(
+       array('key1', 'values', 'v1'),
+       'newValue'
+    );
+
+    // overrides deep but v1 is discarded
+    $test(
+       array('key1', 'values', 'v1', 'newkey', 'v3'),
+       NULL
+    );
+
+    return $tests;
   }
   
   public function testRegressionWeirdComparisonWithInt0AndStringBug() {
@@ -276,8 +320,21 @@ class KeysMapTest extends \Webforge\Code\Test\Base {
     $tests[] = array($ref, array('undefined'), FALSE );
     $tests[] = array($ref, array('keys','undefined'), FALSE );
     $tests[] = array($ref, array('keys','key2','undefined'), FALSE );
+    $tests[] = array($ref, array('keys','key2','undefined', 'undefined'), FALSE );
    
     return $tests;    
+  }
+
+
+  public function testRemoveWithoutKeysDoesNothing() {
+    $array = $this->map->toArray();
+
+    $this->map->remove(array());
+
+    $this->assertEquals(
+      $array,
+      $this->map->toArray()
+    );
   }
 
   public function cloningReturnsACopyOftheStructure() {

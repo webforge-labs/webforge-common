@@ -77,7 +77,12 @@ class KeysMap {
     
     $lastKey = array_pop($keys);
     foreach ($keys as $key) {
-      if (!array_key_exists($key,$data)) {
+       // !is_array is when a already set value is overriden by a deeoper path
+       if (!is_array($data)) {
+         $data = array();
+       }
+
+      if (!array_key_exists($key, $data)) { 
         $data[$key] = array();
       }
 
@@ -105,7 +110,7 @@ class KeysMap {
     
     $lastKey = array_pop($keys);
     foreach ($keys as $key) {
-      if (!array_key_exists($key,$data)) {
+      if (!is_array($data) || !array_key_exists($key, $data)) {
         return $this;
       }
       $data =& $data[$key];
