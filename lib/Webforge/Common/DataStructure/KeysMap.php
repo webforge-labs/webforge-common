@@ -149,6 +149,11 @@ class KeysMap {
     
     return $this;
   }
+
+  public function reset() {
+    $this->data = array();
+    return $this;
+  }
   
   /**
    * @return bool

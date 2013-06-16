@@ -408,6 +408,13 @@ class KeysMapTest extends \Webforge\Code\Test\Base {
     $this->assertFalse($this->map->isEmpty());
   }
 
+  public function testResetCleansTheMap() {
+    $this->map->reset();
+
+    $this->assertTrue($this->map->isEmpty());
+    $this->assertEquals(array(), $this->map->toArray());
+  }
+
   protected function cons(Array $data) {
     $map = new KeysMap($data);
     return $map;
