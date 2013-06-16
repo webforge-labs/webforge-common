@@ -277,5 +277,21 @@ class String {
       return $symmetricWrapper.$string.$symmetricWrapper;
     }
   }
+
+  /**
+   * Replace %var% with values in the string
+   * 
+   * @return string
+   */
+  public static function miniTemplate($string, Array $vars) {
+    $string = str_replace(
+      // replace %key%
+      array_map(create_function('$a','return "%".$a."%"; '),array_keys($vars)),
+      // with values
+      array_values($vars),
+      // in
+      $string
+    );
+    return $string;
+  }
 }
-?>

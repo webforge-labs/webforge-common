@@ -310,5 +310,36 @@ JAVASCRIPT;
     
     return $tests;
   }
+
+  /**
+   * @dataProvider provideMiniTemplate
+   */
+  public function testMiniTemplate($template, $vars, $expected) {
+    $this->assertEquals(
+      $expected,
+      S::miniTemplate($template, $vars)
+    );
+  }
+  
+  public static function provideMiniTemplate() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $test(
+      "OIDs %usedOIDs% are used in this game",
+      array('usedOIDs'=>'11601,11602,11603,11604,11605,11606,11617,11618'),
+      "OIDs 11601,11602,11603,11604,11605,11606,11617,11618 are used in this game"
+    );
+
+    $test(
+      '%some %thing%',
+      array('thing'=>'other'),
+      '%some other'
+    );
+  
+    return $tests;
+  }
 }
-?>
