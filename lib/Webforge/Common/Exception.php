@@ -2,9 +2,9 @@
 
 namespace Webforge\Common;
 
-use Psc\Code\ExceptionExportable;
+use Webforge\Common\Exception\InExceptionExportable;
 
-class Exception extends \Exception {
+class Exception extends \Exception implements Exception\MessageException {
   
   /**
    * @chainable
@@ -29,7 +29,6 @@ class Exception extends \Exception {
     $this->message = $msg.$this->message;
     return $this;
   }
-  
   
   /**
    * Returns a nicer string Representation for the Exception
@@ -64,7 +63,7 @@ class Exception extends \Exception {
     }
     
     $text .= 'Uncaught exception \''.get_class($e).'\' with message:'.$cr;
-    if ($e instanceof ExceptionExportable) {
+    if ($e instanceof InExceptionExportable) {
       $text .= str_replace("\n",$cr, wordwrap($e->exportExceptionText(), 140,"\n") ).$cr;
     } else {
       $text .= "'".str_replace("\n",$cr, wordwrap($e->getMessage(),140,"\n") )."'".$cr;
@@ -87,4 +86,3 @@ class Exception extends \Exception {
     return $text;
   }
 }
-?>
