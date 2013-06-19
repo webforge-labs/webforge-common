@@ -80,6 +80,31 @@ class ClassUtilTest extends \Webforge\Code\Test\Base {
     return $tests;
   }
 
+  /**
+   * @dataProvider provideSetNamespace
+   */
+  public function testSetNamespace($className, $namespace, $expectedFQN) {
+    $this->assertEquals($expectedFQN, ClassUtil::setNamespace($className, $namespace));
+  }
+  
+  public static function provideSetNamespace() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $test('CMS\Container', 'Webforge', 'Webforge\CMS\Container');
+    $test('\CMS\Container', 'Webforge', 'Webforge\CMS\Container');
+    $test('\CMS\Container\\', 'Webforge', 'Webforge\CMS\Container');
+
+    $test('Container', 'Webforge\CMS', 'Webforge\CMS\Container');
+    $test('\Container', 'Webforge\CMS', 'Webforge\CMS\Container');
+    $test('\Container\\', 'Webforge\CMS', 'Webforge\CMS\Container');
+  
+    return $tests;
+  }
+
   public static function provideGetNamespace() {
     $tests = array();
   
