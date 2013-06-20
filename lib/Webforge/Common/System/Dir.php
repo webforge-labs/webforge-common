@@ -50,6 +50,11 @@ class Dir {
   protected $wrapper;
 
   /**
+   * @var bool
+   */
+  protected $cygwin;
+
+  /**
    * Globale ignores for directories
    * 
    * @param array
@@ -124,15 +129,16 @@ class Dir {
     
     $pathArray = array();
     if (mb_strlen($path) > 0) {
-      
+      $this->cygwin = self::isCygwinPath($path);
+
       $path = $this->extractWrapper($path);
 
       // a / can only mean a \ on windows (UNLESS its wrapped!)
-      if (DIRECTORY_SEPARATOR === '\\' && !$this->isWrapped()) {
+      if (DIRECTORY_SEPARATOR === '\\' && !$this->isWrapped() && !$this->isCygwin()) {
         $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
       }
-      
-      $ds = $this->isWrapped() ? '/' : DIRECTORY_SEPARATOR;
+
+      $ds = $this->getDS();
       
       if (mb_strpos($path,$ds) !== FALSE) {
         $pathArray = explode($ds,$path);
@@ -164,6 +170,14 @@ class Dir {
   
   public static function isWrappedPath($path) {
     return Preg::match($path, '|^([a-z\.0-9]+)://(.*)$|') > 0;
+  }
+
+  public static function isCygwinPath($path) {
+    return Preg::match($path, '|^/cygdrive/[a-z]/|i') > 0;
+  }
+
+  public function isCygwin() {
+    return $this->cygwin;
   }
   
   /**
@@ -851,7 +865,7 @@ class Dir {
   public function getPath() {
     $pathString = implode($this->path, $this->getDS());
     
-    if (!$this->isRelative() && $this->getOS() == 'UNIX') {
+    if (!$this->isRelative() && ($this->getOS() == 'UNIX' || $this->isCygwin())) {
       $pathString = '/'.$pathString;
       // auch wrapped unix pfade fangen mit / davor an
     }
@@ -912,10 +926,10 @@ class Dir {
   /**
    * Returns the DirectorySeperator
    * 
-   * @return \ oder / (bei isWrapped() true ist dies immer /
+   * @return \ oder / (bei isWrapped() true ist dies immer / (oder by cygwin paths)
    */
   public function getDS() {
-    return $this->isWrapped() ? '/' : DIRECTORY_SEPARATOR; // siehe auch bei setPath()
+    return $this->isWrapped() || $this->isCygwin() ? '/' : DIRECTORY_SEPARATOR;
   }
 
   /**
@@ -987,6 +1001,4 @@ class Dir {
     
     return $dir;
   }
-
 }
-?>

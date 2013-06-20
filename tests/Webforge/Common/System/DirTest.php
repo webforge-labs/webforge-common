@@ -186,5 +186,15 @@ class DirTest extends PHPUnit_Framework_TestCase {
     $this->assertInstanceof('Webforge\Common\DateTime\DateTime', $this->dir->getCreateTime());
     $this->assertInstanceof('Webforge\Common\DateTime\DateTime', $this->dir->getAccessTime());
   }
+
+  public function testCygiwnPathsAreTreatedCorrectly() {
+    $path = '/cygdrive/D/www/psc-cms-js/git/';
+
+    $this->assertTrue(Dir::isCygwinPath($path));
+
+    $this->assertEquals(
+      $path,
+      (string) new Dir($path)
+    );
+  }
 }
-?>
