@@ -3,6 +3,7 @@
 namespace Webforge\Common\System;
 
 use PHPUnit_Framework_TestCase;
+use SplFileInfo;
 
 class DirTest extends PHPUnit_Framework_TestCase {
   
@@ -20,12 +21,116 @@ class DirTest extends PHPUnit_Framework_TestCase {
     $this->assertInstanceOf('Webforge\Common\System\Dir', Dir::factoryTS(__DIR__));
   }
   
+  /**
+   * @dataProvider provideDifferentPaths
+   */
+  public function testDifferentPathsAreParsedAndTransformedToStringCorrectly($path, $expectedPath, $os) {
+    $dir = new Dir($path);
+
+    $this->assertEquals(
+      $expectedPath,
+      $dir->getOSPath($os)
+    );
+  }
+
+  public static function provideDifferentPaths() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $test('vfs:///project/src/', 'vfs:///project/src/', Dir::WINDOWS);
+    $test('vfs:///project/src/', 'vfs:///project/src/', Dir::UNIX);
+
+    $test('phar:///root/path/x.phar/src/', 'phar:///root/path/x.phar/src/', Dir::WINDOWS);
+    $test('phar:///root/path/x.phar/src/', 'phar:///root/path/x.phar/src/', Dir::UNIX);
+
+    $test('/var/local/www/', '/var/local/www/', Dir::UNIX);
+    
+    $test('D:\www\webforge\\', 'D:\www\webforge\\', Dir::WINDOWS);
+    $test('D:\www\webforge\\', '/D:/www/webforge/', Dir::UNIX);
+    $test('C:\\', 'C:\\', Dir::WINDOWS);
+    $test('C:\\', '/C:/', Dir::UNIX);
+
+    $test('.\its\relative\\','.\its\relative\\', Dir::WINDOWS);
+    $test('.\its\relative\\','./its/relative/', Dir::UNIX); 
+
+    $test('./its/relative/', './its/relative/', Dir::UNIX);
+    $test('./its/relative/', '.\its\relative\\', Dir::WINDOWS);
+    
+    $test('its/relative/', 'its/relative/', Dir::UNIX);
+    $test('its/relative/', 'its\relative\\', Dir::WINDOWS);
+
+    $test('its\relative\\', 'its\relative\\', Dir::WINDOWS);
+    $test('its\relative\\', 'its/relative/', Dir::UNIX);
+
+
+    $test('/cygdrive/c/', '/cygdrive/c/', Dir::UNIX);
+    $test('/cygdrive/c/', '/cygdrive/c/', Dir::WINDOWS);
+
+    $test('/cygdrive/c/with/longer/path', '/cygdrive/c/with/longer/path', Dir::UNIX);
+    $test('/cygdrive/c/with/longer/path', '/cygdrive/c/with/longer/path', Dir::WINDOWS);
+
+    $test('/cygdrive/c/with/bad\\path', '/cygdrive/c/with/bad/path', Dir::UNIX);
+    $test('/cygdrive/c/with/bad\\path', '/cygdrive/c/with/bad/path', Dir::WINDOWS);
+
+    $test('/cygdrive/c/with/okay\\ path/', '/cygdrive/c/with/okay\\ path/', Dir::UNIX);
+    $test('/cygdrive/c/with/okay\\ path/', '/cygdrive/c/with/okay\\ path/', Dir::WINDOWS);
+    
+
+    // edge cases with exception?
+    //$test('/var/local/www/', 'var\local\www\\', Dir::WINDOWS);
+  
+    return $tests;
+  }
+
+  /**
+   * @dataProvider provideAbsoluteOrRelative
+   */
+  public function testAbsoluteOrRelative($path, $isAbsolute) {
+    $dir = new Dir($path);
+    if ($isAbsolute) {
+      $this->assertTrue($dir->isAbsolute(), $path.' ->isAbsolute');
+      $this->assertFalse($dir->isRelative(), $path.' ->isNotRelative');
+    } else {
+      $this->assertFalse($dir->isAbsolute(), $path.' ->isNotAbsolute');
+      $this->assertTrue($dir->isRelative(), $path.' ->isRelative');
+    }
+  }
+  
+  public static function provideAbsoluteOrRelative() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $absolute = TRUE;
+    $relative = FALSE;
+    $test('vfs:///project/src/', $absolute);
+    $test('phar:///root/path/x.phar/src/', $absolute);
+    $test('/var/local/www/', $absolute);
+    $test('D:\www\webforge\\', $absolute);
+    $test('C:\\', 'C:\\', $absolute);
+
+    $test('.\its\relative\\', $relative);
+    $test('./its/relative/', $relative);
+    $test('../../its/relative/', $relative);
+    $test('its/relative/', $relative);
+    $test('its\relative\\', $relative);
+  
+    return $tests;
+  }
+
+  
   public function testSubDir() {
     $sub = new Dir(__DIR__.DIRECTORY_SEPARATOR);
     $parent = new Dir(realpath(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..').DIRECTORY_SEPARATOR);
     
     $this->assertTrue($sub->isSubdirectoryOf($parent));
   }
+
   
   /**
    * @depends testSubDir
@@ -127,9 +232,9 @@ class DirTest extends PHPUnit_Framework_TestCase {
     }
   }
   
-  public function testIsRelative() {
+  public function testMakeRelativeToMakesDirRelative() {
     $base = Dir::factoryTS(__DIR__);
-    $graph = $base->sub('psc/class/Graph//');
+    $graph = $base->sub('psc/class/Graph/');
     $psc = $base->sub('psc/');
     
     $graph->makeRelativeTo($psc);
@@ -187,7 +292,7 @@ class DirTest extends PHPUnit_Framework_TestCase {
     $this->assertInstanceof('Webforge\Common\DateTime\DateTime', $this->dir->getAccessTime());
   }
 
-  public function testCygiwnPathsAreTreatedCorrectly() {
+  public function testCygwinPathsAreTreatedCorrectly() {
     $path = '/cygdrive/D/www/psc-cms-js/git/';
 
     $this->assertTrue(Dir::isCygwinPath($path));
@@ -197,4 +302,29 @@ class DirTest extends PHPUnit_Framework_TestCase {
       (string) new Dir($path)
     );
   }
+
+  /**
+   * @dataProvider provideFixToUnixPath
+   */
+  public function testFixToUnixPath($actualPath, $expectedPath) {
+    $this->assertEquals($expectedPath, Dir::fixToUnixPath($actualPath));
+  }
+  
+  public static function provideFixToUnixPath() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $test('/var/local\www/', '/var/local/www/');
+    $test('\var/local\www/', '/var/local/www/');
+    $test('/var/local/www\\', '/var/local/www/');
+
+    $test('/var/with\\ space/', '/var/with\\ space/');
+    $test('/var/with\\\\ backslash/', '/var/with\\\\ backslash/');
+  
+    return $tests;
+  }
 }
+ 
