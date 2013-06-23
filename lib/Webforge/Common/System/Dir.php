@@ -139,6 +139,7 @@ class Dir {
       $parts = explode('/', $this->fixToUnixPath($path));
       $this->prefix = '/cygdrive/'.$parts[2].'/';
       $this->path = array_slice($parts, 3, -1);
+
     } elseif (self::isWrappedPath($path)) {
       $wrapper = NULL;
       $path = $this->extractWrapper($this->fixToUnixPath($path), $wrapper);
@@ -161,20 +162,28 @@ class Dir {
       $this->wrapWith($wrapper);
     } elseif (self::isAbsolutePath($path)) {
 
-      if (DIRECTORY_SEPARATOR === '\\') {
-        if (mb_strpos($path, '\\\\') === 0) {
-          $parts = explode('\\', $this->fixToWindowsPath($path));
-          $this->prefix = '\\\\'.$parts[1];
-          $this->path = array_slice($parts, 1, -1);
-        } else {
-          // windows drive as windows path D:\
-          $parts = explode('\\', $this->fixToWindowsPath($path));
+      if (mb_strpos($path, '\\\\') === 0) {
+        $parts = explode('\\', $this->fixToWindowsPath($path));
+        $this->prefix = '\\\\'.$parts[1];
+        $this->path = array_slice($parts, 1, -1);
+
+      } elseif (DIRECTORY_SEPARATOR === '\\') {
+        // windows drive as windows path D:\
+        $parts = explode('\\', $this->fixToWindowsPath($path));
+
+        if (mb_strpos($parts[0], ':') === 1) {
           $this->prefix = $parts[0].'\\';
           $this->path = array_slice($parts, 1, -1);
+
+        } else {
+          // unix path on windows
+          $this->prefix = '/';
+          $this->path = array_slice($parts, 0, -1);
         }
+
       } else {
         $parts = explode('/', $this->fixToUnixPath($path));
-  
+
         // windows drive as windows path /C:/
         if (mb_strpos($parts[0], ':') === 1) {
           $this->prefix = '/'.mb_substr($parts[0], 0, 1).':/';
@@ -186,6 +195,7 @@ class Dir {
       }
 
     } else {
+      // relative
       $this->prefix = NULL;
 
       if (DIRECTORY_SEPARATOR === '\\') {
@@ -207,7 +217,7 @@ class Dir {
 
     // renumber
     $this->path = array_merge($this->path);
-    
+
     return $this;
   }
 
@@ -993,8 +1003,6 @@ class Dir {
     if ($this->isWindowsDrivePrefix($letter)) {
       $osPrefix  = $os === self::UNIX ? '/' : '';
       $osPrefix .= $letter.':'.$this->getOSDS($os);
-    } elseif ($this->prefix === DIRECTORY_SEPARATOR) {
-      $osPrefix = $this->getOSDS($os);
     } else {
       $osPrefix = $this->prefix;
     }
