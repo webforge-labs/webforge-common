@@ -165,7 +165,7 @@ class Dir {
         if (mb_strpos($path, '\\\\') === 0) {
           $parts = explode('\\', $this->fixToWindowsPath($path));
           $this->prefix = '\\\\'.$parts[1];
-          $this->path = array_slice($parts, 2, -1);
+          $this->path = array_slice($parts, 1, -1);
         } else {
           // windows drive as windows path D:\
           $parts = explode('\\', $this->fixToWindowsPath($path));
