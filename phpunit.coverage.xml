@@ -9,6 +9,7 @@
          stopOnFailure="false"
          syntaxCheck="false"
          bootstrap="./bootstrap.php"
+         forceCoversAnnotation="true"
 >
     <testsuites>
         <testsuite name="Webforge Common">

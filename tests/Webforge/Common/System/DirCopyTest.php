@@ -4,6 +4,9 @@ namespace Webforge\Common\System;
 
 use Webforge\Common\TestCase;
 
+/**
+ * @covers Webforge\Common\System\Dir
+ */
 class DirCopyTest extends TestCase {
   
   /**

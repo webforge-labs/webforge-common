@@ -6,6 +6,8 @@ use Webforge\Common\String as S;
 use Webforge\Common\Preg;
 use Webforge\Common\ArrayUtil AS A;
 use Webforge\Common\DateTime\DateTime;
+use InvalidArgumentException;
+use LogicException;
 
 /**
  *
@@ -45,22 +47,15 @@ class Dir {
    */
   private $path = array();
 
+
+  protected $prefix;
+
   /**
    * The name of the streamwrapper if path is wrapped
    * 
    * @var string 
    */
   protected $wrapper;
-
-  /**
-   * The name of the host in the wrapper part
-   * 
-   * for example the file url scheme is:
-   * file://host/path/to/dir/
-   * so if you have no host (its localhost) its like:
-   * file:///path/to/dir/
-   */
-  protected $wrapperHost;
 
   /**
    * @var bool
@@ -74,11 +69,6 @@ class Dir {
    * @see getContents()
    */
   public $ignores = array();
-
-  /**
-   * @var bool
-   */
-  protected $absolute;
 
   /**
    * Create a new Instance of a directory
@@ -142,41 +132,73 @@ class Dir {
     
     $lastChar = mb_substr($path,-1);
     if ($lastChar !== '\\' && $lastChar !== '/') {
-      throw new Exception($path.' should end with (back-)slash.');
+      throw new InvalidArgumentException($path.' should end with (back-)slash.');
     }
     
-    $pathArray = array();
-    if (mb_strlen($path) > 0) {
-
-      if ($this->cygwin = self::isCygwinPath($path)) {
-        $parts = explode('/', $this->fixToUnixPath($path));
-        $this->prefix = '/cygdrive/'.$parts[1].'/';
+    if ($this->cygwin = self::isCygwinPath($path)) {
+      $parts = explode('/', $this->fixToUnixPath($path));
+      $this->prefix = '/cygdrive/'.$parts[2].'/';
+      $this->path = array_slice($parts, 3, -1);
+    } elseif (self::isWrappedPath($path)) {
+      $wrapper = NULL;
+      $path = $this->extractWrapper($this->fixToUnixPath($path), $wrapper);
+      $parts = explode('/', $path);
+      // windows drive as unix path /C:/
+      if (mb_strpos($parts[1], ':') === 1) {
+        $this->prefix = mb_substr($parts[1], 0, 1).':\\';
         $this->path = array_slice($parts, 2, -1);
-        $this->absolute = TRUE;
-      } elseif ($this->absolute = self::isAbsolutePath($path)) {
-        
-      }
-
-      $path = $this->extractWrapper($path);
-
-      // a / can only mean a \ on windows (UNLESS its wrapped!)
-      if (DIRECTORY_SEPARATOR === '\\' && !$this->isWrapped() && !$this->isCygwin()) {
-        
-      }
-
-      $ds = $this->getDS();
-      
-      if (mb_strpos($path,$ds) !== FALSE) {
-        $pathArray = explode($ds, $path);
+      // windows drive as windows path C:/
+      } elseif(mb_strpos($parts[0], ':') === 1) {
+        $this->prefix = mb_substr($parts[0], 0, 1).':\\';
+        $this->path = array_slice($parts, 1, -1);
       } else {
-        $pathArray[] = $path;
+        $this->path = array_slice($parts, 1, -1);
+        if (mb_strpos($path, '/') === 0) {
+          $this->prefix = '/';
+        }
+      }
+      
+      $this->wrapWith($wrapper);
+    } elseif (self::isAbsolutePath($path)) {
+
+      if (DIRECTORY_SEPARATOR === '\\') {
+        if (mb_strpos($path, '\\\\') === 0) {
+          $parts = explode('\\', $this->fixToWindowsPath($path));
+          $this->prefix = '\\\\'.$parts[1];
+          $this->path = array_slice($parts, 2, -1);
+        } else {
+          $parts = explode('\\', $this->fixToWindowsPath($path));
+          $this->prefix = $parts[0].'\\';
+          $this->path = array_slice($parts, 1, -1);
+        }
+      } else {
+        $this->prefix = '/';
+        $parts = explode('/', $this->fixToUnixPath($path));
+        $this->path = array_slice($parts, 0, -1);
       }
 
-      /* leere elemente rausfiltern (safe) */
-      $pathArray = array_filter($pathArray,create_function('$a','return (mb_strlen($a) > 0);'));
-      $pathArray = array_merge($pathArray); // renumber
+    } else {
+      $this->prefix = NULL;
+
+      if (DIRECTORY_SEPARATOR === '\\') {
+        $parts = explode('\\', $this->fixToWindowsPath($path));
+      } else {
+        $parts = explode('/', $this->fixToUnixPath($path));
+      }
+
+      $this->path = $parts;
     }
-    $this->path = $pathArray;
+
+    // cleanup empty elements
+    $this->path = array_filter(
+      $this->path, 
+      function ($part) {
+        return (mb_strlen($part) > 0);
+      }
+    );
+
+    // renumber
+    $this->path = array_merge($this->path);
     
     return $this;
   }
@@ -190,22 +212,17 @@ class Dir {
     return str_replace('/', '\\', $mixedPath);
   }
 
-  protected function updatePath(Array $pathArray, $absolute) {
-    $this->path = $pathArray;
-    $this->absolute = (bool) $absolute;
-    $this->cygwin = count($pathArray) > 0 && $pathArray[0] === 'cygdrive';
-  }
-
   /**
-   * @return $path (verkürzt um den wrapper)
+   * @param string &$wrapper
+   * @return string $path (verkürzt um den wrapper)
    */
-  public function extractWrapper($path) {
+  protected function extractWrapper($path, &$wrapper) {
     $m = array();
     if (Preg::match($path, '|^([a-z\.0-9]+)://(.*)$|', $m) > 0) {
-      $this->setWrapper($m[1]);
+      $wrapper = $m[1];
       $path = rtrim($m[2],'\\/').'/'; // cleanup trailing-backslash
-      // noch gegen stream_get_wrappers(); validieren?
     }
+
     return $path;
   }
   
@@ -227,27 +244,27 @@ class Dir {
   public function getWrapper() {
     return $this->wrapper;
   }
-
-  public function getWrapperHost() {
-    return $this->wrapperHost;
-  }
-  
-  /**
-   * @param string der name des wrapper
-   */
-  public function setWrapper($wrapperName) {
-    $this->wrapper = $wrapperName;
-  }
   
   /**
    * Wraps the dir with the wrapper and converts windows paths
+   * 
+   * @deprecated
+   * @param string only the name of the wrapper like file or vfs or phar
+   */
+  public function setWrapper($wrapperName) {
+    return $this->wrapWith($wrapperName);
+  }
+
+  /**
+   * Wraps the dir with the wrapper and converts windows paths
+   * 
+   * @param string only the name of the wrapper like file or vfs or phar
    */
   public function wrapWith($wrapperName) {
-    $this->setWrapper($wrapperName);
-    
-    if ($this->getOS() === 'WINDOWS') {
-      array_unshift($this->path, NULL); // dirty hack?
-    }
+    $this->wrapper = $wrapperName;
+
+    $this->prefix = $this->wrapper.'://'.$this->getOSPrefix(self::UNIX);
+
     return $this;
   }
 
@@ -341,11 +358,29 @@ class Dir {
     }
 
     /* schneidet den zu entfernen pfad vom aktuellen ab */
-    $this->updatePath(array_slice($this->path, count($dir->getPathArray())));
-    
+    $this->path = array_slice($this->path, count($dir->getPathArray()));
+    $this->makeRelative();
+
     /* ./ hinzufügen */
     array_unshift($this->path,'.');
 
+    return $this;
+  }
+
+  /**
+   * Sets the path to a relative one (no matter if its relative or absolute)
+   * 
+   * this removes the absolute part of the path which will be:
+   * /cygdrive/x for cygwin paths
+   * X:\ for windows paths
+   * / for unix paths
+   * wrapper:// for wrapper-paths
+   * @chainable
+   */
+  public function makeRelative() {
+    $this->cygwin = FALSE;
+    $this->wrapper = NULL;
+    $this->prefix = NULL;
     return $this;
   }
   
@@ -513,8 +548,8 @@ class Dir {
     while (FALSE !== ($filename = readdir($handle))) {
       if ($filename != '.' && $filename != '..' && ! (isset($callBack) && count($ignores) > 0 && array_sum(array_map($callBack,array_fill(0,count($ignores),$filename),$ignores)) > 0)) {  // wenn keine ignore regel matched
           
-        if (is_file($this->to_string().$filename)) {
-          $file = new File(clone $this,$filename); // denn die unterverzeichnisse werden auch gecloned (wegen to_string)
+        if (is_file($this->getPath().$filename)) {
+          $file = new File(clone $this,$filename);
 
           if (isset($extensions) && (is_string($extensions) && $file->getExtension() != ltrim($extensions,'.') || is_array($extensions) && !in_array($file->getExtension(), $extensions)))
             continue;
@@ -522,8 +557,8 @@ class Dir {
           $content[] = $file;
         }
           
-        if (is_dir($this->to_string().$filename) && $subDirs) { // wenn extensions gesetzt ist, keine verzeichnisse, per default
-          $directory = new Dir($this->to_string().$filename.$this->getDS());
+        if (is_dir($this->getPath().$filename) && $subDirs) { // wenn extensions gesetzt ist, keine verzeichnisse, per default
+          $directory = new Dir($this->getPath().$filename.$this->getDS());
           $directory->ignores = array_merge($directory->ignores,$ignores); // wir vererben unsere ignores
 
           $content[] = $directory;
@@ -888,14 +923,14 @@ class Dir {
    * @return bool
    */
   public function isRelative() {
-    return !$this->absolute;
+    return $this->prefix === NULL;
   }
 
   /**
    * @return bool
    */
   public function isAbsolute() {
-    return $this->absolute;
+    return $this->prefix !== NULL;
   }
 
   /**
@@ -905,29 +940,20 @@ class Dir {
     return   mb_strpos($path, '/') === 0 // unix
           || mb_strpos($path, ':') === 1 // windows C:\ etc
           || self::isCygwinPath($path)   // /cygdrive/c
-          || self::isWrappedPath($path); // phar:// ...
+          || self::isWrappedPath($path) // phar:// ...
+          || mb_strpos($path, '\\\\') === 0;
   }
   
   /**
-   * Gibt den Pfad als String zurück
+   * Returns the Path as string
    * 
-   * je nach Betriebssystem wird ein UNIX oder Windows Pfad zurückgegeben. <br />
-   * jedes Verzeichnis ohne Trailingslash zurückgegeben.
+   * the path is returned for the current Operating System
    * @return string
    */
   public function getPath() {
-    $pathString = implode($this->path, $this->getDS());
-    
-    if (!$this->isRelative() && ($this->getOS() == 'UNIX' || $this->isCygwin())) {
-      $pathString = '/'.$pathString;
-      // auch wrapped unix pfade fangen mit / davor an
-    }
-    
-    if ($this->isWrapped()) {
-      $pathString = $this->getWrapper().'://'.$pathString;
-    }
+    $ds = $this->getDS();
 
-    return $pathString.$this->getDS();
+    return $this->prefix.(empty($this->path) ? '' : implode($ds, $this->path).$ds);
   }
 
   /**
@@ -942,20 +968,63 @@ class Dir {
    * @param const $os self::WINDOWS|self::UNIX
    */
   public function getOSPath($os) {
-    if ($this->isWrapped()) {
-      return $this->getWrapper().'://'.$this->wrapperHost.'/'.implode('/', $this->path).'/';
+    $osDS = $this->getOSDS($os);
+
+    return $this->getOSPrefix($os).(empty($this->path) ? '' : implode($osDS, $this->path).$osDS);
+  }  
+
+  /**
+   * Returns a prefix which is converted to the specific os
+   * 
+   * if prefix is absolute this ends with a slash or backslash
+   * @return string
+   */
+  protected function getOSPrefix($os) {
+
+    $letter = NULL;
+    if ($this->isWindowsDrivePrefix($letter)) {
+      $osPrefix  = $os === self::UNIX ? '/' : '';
+      $osPrefix .= $letter.':'.$this->getOSDS($os);
+    } elseif ($this->prefix === DIRECTORY_SEPARATOR) {
+      $osPrefix = $this->getOSDS($os);
     } else {
-      $ds = ($os == self::UNIX || $this->isCygwin()) ? '/' : '\\';
-
-      $pathString = implode($this->path, $ds);
-
-      if (!$this->isRelative() && $ds === '/') {
-        $pathString = '/'.$pathString;
-      }
+      $osPrefix = $this->prefix;
     }
 
+    return $osPrefix;
+  }
 
-    return $pathString.$ds;
+  /**
+   * Returns the DirectorySeperator
+   * 
+   * @return \ oder / (bei isWrapped() true ist dies immer / (oder by cygwin paths)
+   */
+  public function getDS() {
+    return ($this->isWrapped() || $this->isCygwin()) ? '/' : DIRECTORY_SEPARATOR;
+  }
+
+  /**
+   * Returns the DirectorySeperator for a specific operating system
+   * 
+   * @return \ or /
+   */
+  public function getOSDS($os) {
+    return ($this->isWrapped() || $this->isCygwin() || $os === self::UNIX) ? '/' : DIRECTORY_SEPARATOR;
+  }
+
+  /**
+   * @return bool
+   */
+  protected function isWindowsDrivePrefix(&$letter = NULL) {
+    if (mb_strpos($this->prefix, ':') === 1) {
+      $letter = mb_substr($this->prefix, 0, 1);
+      return TRUE;
+    } elseif (mb_strpos($this->prefix, ':') === 2) { // like /C:/ 
+      $letter = mb_substr($this->prefix, 1, 1);
+      return TRUE;
+    }
+
+    return FALSE;
   }
   
   /**
@@ -1005,15 +1074,6 @@ class Dir {
   }
 
   /**
-   * Returns the DirectorySeperator
-   * 
-   * @return \ oder / (bei isWrapped() true ist dies immer / (oder by cygwin paths)
-   */
-  public function getDS() {
-    return $this->isWrapped() || $this->isCygwin() ? '/' : DIRECTORY_SEPARATOR;
-  }
-
-  /**
    * 
    * @return string WINDOWS|UNIX
    */
@@ -1024,11 +1084,6 @@ class Dir {
       $os = 'UNIX';
     }
     return $os;
-  }
-
-
-  public function to_string() {
-    return $this->getPath();
   }
 
   public function __toString() {
