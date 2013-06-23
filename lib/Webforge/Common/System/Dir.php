@@ -167,14 +167,22 @@ class Dir {
           $this->prefix = '\\\\'.$parts[1];
           $this->path = array_slice($parts, 2, -1);
         } else {
+          // windows drive as windows path D:\
           $parts = explode('\\', $this->fixToWindowsPath($path));
           $this->prefix = $parts[0].'\\';
           $this->path = array_slice($parts, 1, -1);
         }
       } else {
-        $this->prefix = '/';
         $parts = explode('/', $this->fixToUnixPath($path));
-        $this->path = array_slice($parts, 0, -1);
+  
+        // windows drive as windows path /C:/
+        if (mb_strpos($parts[0], ':') === 1) {
+          $this->prefix = '/'.mb_substr($parts[0], 0, 1).':/';
+          $this->path = array_slice($parts, 2, -1);
+        } else {
+          $this->prefix = '/';
+          $this->path = array_slice($parts, 0, -1);
+        }
       }
 
     } else {
@@ -1009,7 +1017,7 @@ class Dir {
    * @return \ or /
    */
   public function getOSDS($os) {
-    return ($this->isWrapped() || $this->isCygwin() || $os === self::UNIX) ? '/' : DIRECTORY_SEPARATOR;
+    return ($this->isWrapped() || $this->isCygwin() || $os === self::UNIX) ? '/' : '\\';
   }
 
   /**
@@ -1103,19 +1111,6 @@ class Dir {
     
     return $str;
   }
-
-  /**
-   * Entfernt (sofern vorhanden) den Trailingslash aus einer Pfadangabe
-   * @return string die Pfadangabe ohne den Trailingslash
-   */
-  public static function unTrailSlash($path) {
-    $unSlPath = $path;
-    if (S::ends_with($path,'/') || S::ends_with($path,'\\')) {
-      $unSlPath = mb_substr($path,0,-1);
-    }
-    return $unSlPath;
-  }
-
 
   /**
    * Extrahiert das Verzeichnis aus einer Angabe zu einer Datei

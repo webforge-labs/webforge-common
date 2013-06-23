@@ -63,7 +63,7 @@ class DirTest extends PHPUnit_Framework_TestCase {
   /**
    * @dataProvider provideDifferentPaths
    */
-  public function testDifferentPathsAreParsedAndTransformedToStringCorrectly($path, $expectedPath, $os) {
+  public function testgetOSPathReturnsPathForGivenOS($path, $expectedPath, $os) {
     $dir = new Dir($path);
 
     $this->assertEquals(
