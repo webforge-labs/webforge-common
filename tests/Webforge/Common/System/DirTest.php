@@ -227,5 +227,44 @@ class DirTest extends PHPUnit_Framework_TestCase {
   
     return $tests;
   }
+
+
+  /**
+   * @dataProvider provideCreateFromURL
+   */
+  public function testCreateFromURL($url, $expectedPath, $root = NULL) {
+    $root = $root ?: new Dir('D:\www\\');
+
+    $this->assertEquals(
+      $expectedPath,
+      (string) Dir::createFromURL($url, $root)->resolvePath()->getOSPath(Dir::WINDOWS)
+    );
+  }
+  
+  public static function provideCreateFromURL() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+
+    $root = 'D:\www\\';
+  
+    $test('something/relative', $root.'something\relative\\');
+    $test('something/relative/which/./resolves', $root.'something\relative\\which\\resolves\\');
+    $test('something/relative/which/../resolved', $root.'something\relative\resolved\\');
+
+    $test('/', $root);
+    $test('./', $root);
+
+    return $tests;
+  }
+
+  public function testCreateFromURLUsesCWDAsDefault() {
+    $this->assertEquals(
+      getcwd().DIRECTORY_SEPARATOR.'in'.DIRECTORY_SEPARATOR.'cwd'.DIRECTORY_SEPARATOR,
+      (string) Dir::createFromURL('in/cwd/')
+    );
+  }
 }
  

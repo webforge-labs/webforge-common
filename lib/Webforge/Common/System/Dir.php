@@ -109,6 +109,17 @@ class Dir {
       return new static(ltrim($path, '\\/').DIRECTORY_SEPARATOR);
     }
   }
+
+   /**
+   * Creates the dir from a relative URL in relation to $base
+   * 
+   * @return Psc\System\Dir
+   */
+  public static function createFromURL($url, Dir $base = NULL) {
+    if (!isset($base)) $base = new Dir(getcwd().DIRECTORY_SEPARATOR);
+    
+    return $base->sub($url);
+  }
   
   /**
    * Creates a temporary Directory
