@@ -174,9 +174,14 @@ class DirTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testUnixRegressionForAbsolutePath_factoryTSDoesLtrimInsteadofRtrim() {
-    $dir = Dir::factoryTS('/var/local/www/tiptoi.pegasus.ps-webforge.net/base/src/');
-
-    $this->assertEquals('/var/local/www/tiptoi.pegasus.ps-webforge.net/base/src/', (string) $dir);
+    if (DIRECTORY_SEPARATOR === '/') {
+      $dir = Dir::factoryTS('/var/local/www/tiptoi.pegasus.ps-webforge.net/base/src/');
+      $this->assertEquals('/var/local/www/tiptoi.pegasus.ps-webforge.net/base/src/', (string) $dir);
+    } else {
+      // not critical on windows, but anyway
+      $dir = Dir::factoryTS('/D:/var/local/www/tiptoi.pegasus.ps-webforge.net/base/src/');
+      $this->assertEquals('D:\var\local\www\tiptoi.pegasus.ps-webforge.net\base\src\\', (string) $dir);
+    }
   }
 
   public function testisSubDirectoryOf() {

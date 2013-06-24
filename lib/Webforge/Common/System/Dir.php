@@ -106,7 +106,7 @@ class Dir {
     if (!isset($path)) {
       return new static(NULL);
     } else {
-      return new static(ltrim($path, '\\/').DIRECTORY_SEPARATOR);
+      return new static(rtrim($path, '\\/').DIRECTORY_SEPARATOR);
     }
   }
 
