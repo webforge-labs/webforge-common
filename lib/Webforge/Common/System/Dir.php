@@ -186,6 +186,11 @@ class Dir {
           $this->prefix = $parts[0].'\\';
           $this->path = array_slice($parts, 1, -1);
 
+          // windows drive as unix path on windows
+        } elseif (mb_strpos($parts[1], ':') === 1) {
+          $this->prefix = $parts[1].'\\';
+          $this->path = array_slice($parts, 2, -1);
+
         } else {
           // unix path on windows
           $this->prefix = '/';
@@ -305,13 +310,12 @@ class Dir {
   }
 
   /**
-   * Wandelt relative Bezüge im Pfad des Verzeichnis in konkrete um
+   * Resolves relative parts of the path an normalizes
    *
-   * löst z.b. sowas wie ./ oder ../ auf.<br />
-   * Kann dafür benutzt werden das aktuelle Verzeichnis als Objekt zu erhalten:
-   * <code>
-   *   print Dir::factory('.')->resolvePath();
-   * </code>
+   * if path is relative its resolved to the current working directory
+   * 
+   * the type of the path of getcwd will be used. So this might change the prefix-type of directory!
+   * if dir is not relative this works like realpath with directories that do not exist
    * @uses PHP::getcwd()
    * @chainable
    */
@@ -320,11 +324,13 @@ class Dir {
       return $this;
     }
     
-    if ($this->path[0] == '.' || $this->path[0] == '..') { 
+    if ($this->isRelative()) { 
       /* wir ermitteln das aktuelle working directory und fügen dieses vor unserem bisherigen Pfad hinzu
-       * den . am anfang brauchen wir nicht machen, das wird nachher normalisiert
+       * den . am anfang brauchen wir nicht wegmachen, das wird nachher normalisiert
        */
       $cwd = self::factory(getcwd().DIRECTORY_SEPARATOR);
+      $this->prefix = $cwd->getPrefix($this);
+
       $this->path = array_merge(
         $cwd->getPathArray(), 
         $this->path
@@ -1150,5 +1156,14 @@ class Dir {
     }
     
     return $dir;
+  }
+
+  /**
+   * 
+   * function used from resolvePath()
+   * @namespace-only
+   */
+  public function getPrefix(Dir $getter) {
+    return $this->prefix;
   }
 }

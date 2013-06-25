@@ -92,6 +92,9 @@ class DirTest extends PHPUnit_Framework_TestCase {
     $test('C:\\', 'C:\\', Dir::WINDOWS);
     $test('C:\\', '/C:/', Dir::UNIX);
 
+    $test('/D:/www/webforge/', 'D:\www\webforge\\', Dir::WINDOWS);
+    $test('/D:/www/webforge/', '/D:/www/webforge/', Dir::UNIX);
+
     $test('.\its\relative\\','.\its\relative\\', Dir::WINDOWS);
     $test('.\its\relative\\','./its/relative/', Dir::UNIX); 
 
@@ -178,10 +181,59 @@ class DirTest extends PHPUnit_Framework_TestCase {
       $dir = Dir::factoryTS('/var/local/www/tiptoi.pegasus.ps-webforge.net/base/src/');
       $this->assertEquals('/var/local/www/tiptoi.pegasus.ps-webforge.net/base/src/', (string) $dir);
     } else {
-      // not critical on windows, but anyway
       $dir = Dir::factoryTS('/D:/var/local/www/tiptoi.pegasus.ps-webforge.net/base/src/');
       $this->assertEquals('D:\var\local\www\tiptoi.pegasus.ps-webforge.net\base\src\\', (string) $dir);
     }
+  }
+
+  public function testDotMakesAnRelativeEmptyPathedDir() {
+    $dir = Dir::factoryTS('.');
+
+    $this->assertEquals(
+      '.'.DIRECTORY_SEPARATOR,
+      (string) $dir
+    );
+
+    $this->assertTrue($dir->isRelative());
+  }
+
+  public function testDotMakesAnDirThatExpandsToCWDOnResolve() {
+    $dir = Dir::factoryTS('.');
+
+    $dir->resolvePath();
+
+    $this->assertEquals(
+      getcwd().DIRECTORY_SEPARATOR,
+      (string) $dir
+    );
+  }
+
+  /**
+   * @dataProvider provideResolvePathNormalizesPathAndReplacesWithCWD
+   */
+  public function testResolvePathNormalizesPathAndReplacesWithCWD() {
+
+  }
+  
+  public static function provideResolvePathNormalizesPathAndReplacesWithCWD() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+
+    $ds = DIRECTORY_SEPARATOR;
+    $cwd = getcwd();
+    $lowerCwd = dirname($cwd); // composer trick
+
+    $test('something/relative', implode($ds, array($cwd,'something', 'relative')));
+    $test('./something/relative', implode($ds, array($cwd,'something', 'relative')));
+    $test('./removed/../something/relative', implode($ds, array($cwd,'something', 'relative')));
+    $test('../something/relative/lower', implode($ds, array($lowerCwd, 'something', 'relative', 'lower')));
+    $test('something/empty/../../../', implode($ds, array($lowerCwd)));
+    $test('something/empty/../../', implode($ds, array($cwd)));
+  
+    return $tests;
   }
 
   public function testisSubDirectoryOf() {
