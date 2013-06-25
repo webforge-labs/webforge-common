@@ -41,7 +41,7 @@ class DirTest extends PHPUnit_Framework_TestCase {
    * @dataProvider providePathsWithoutTrailingSlash
    */
   public function testFactoryDoesNotLikeDirectoriesWithoutSlash($erroneous) {
-    $this->setExpectedException('InvalidArgumentException');
+    $this->setExpectedException('Webforge\Common\System\Exception');
 
     new Dir($erroneous);
   }

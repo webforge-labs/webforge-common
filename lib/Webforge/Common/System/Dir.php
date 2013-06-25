@@ -143,7 +143,7 @@ class Dir {
     
     $lastChar = mb_substr($path,-1);
     if ($lastChar !== '\\' && $lastChar !== '/') {
-      throw new InvalidArgumentException($path.' should end with (back-)slash.');
+      throw new Exception($path.' should end with (back-)slash.');
     }
     
     if ($this->cygwin = self::isCygwinPath($path)) {
