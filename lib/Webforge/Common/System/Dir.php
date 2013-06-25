@@ -201,7 +201,10 @@ class Dir {
         $parts = explode('/', $this->fixToUnixPath($path));
 
         // windows drive as windows path /C:/
-        if (mb_strpos($parts[0], ':') === 1) {
+        if (mb_strpos($parts[1], ':') === 1) {
+          $this->prefix = '/'.mb_substr($parts[1], 0, 1).':/';
+          $this->path = array_slice($parts, 2, -1);
+        } elseif (mb_strpos($parts[0], ':') === 1) {
           $this->prefix = '/'.mb_substr($parts[0], 0, 1).':/';
           $this->path = array_slice($parts, 1, -1);
         } else {
