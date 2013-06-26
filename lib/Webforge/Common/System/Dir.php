@@ -155,6 +155,7 @@ class Dir {
       $wrapper = NULL;
       $path = $this->extractWrapper($this->fixToUnixPath($path), $wrapper);
       $parts = explode('/', $path);
+
       // windows drive as unix path /C:/
       if (mb_strpos($parts[1], ':') === 1) {
         $this->prefix = mb_substr($parts[1], 0, 1).':\\';
@@ -164,7 +165,7 @@ class Dir {
         $this->prefix = mb_substr($parts[0], 0, 1).':\\';
         $this->path = array_slice($parts, 1, -1);
       } else {
-        $this->path = array_slice($parts, 1, -1);
+        $this->path = array_slice($parts, 0, -1); // parts 0 maybe not empty for directory/ as rest of path
         if (mb_strpos($path, '/') === 0) {
           $this->prefix = '/';
         }

@@ -79,12 +79,6 @@ class DirTest extends PHPUnit_Framework_TestCase {
       $tests[] = func_get_args();
     };
   
-    $test('vfs:///project/src/', 'vfs:///project/src/', Dir::WINDOWS);
-    $test('vfs:///project/src/', 'vfs:///project/src/', Dir::UNIX);
-
-    $test('phar:///root/path/x.phar/src/', 'phar:///root/path/x.phar/src/', Dir::WINDOWS);
-    $test('phar:///root/path/x.phar/src/', 'phar:///root/path/x.phar/src/', Dir::UNIX);
-
     $test('/var/local/www/', '/var/local/www/', Dir::UNIX);
     
     $test('D:\www\webforge\\', 'D:\www\webforge\\', Dir::WINDOWS);
@@ -118,7 +112,17 @@ class DirTest extends PHPUnit_Framework_TestCase {
 
     $test('/cygdrive/c/with/okay\\ path/', '/cygdrive/c/with/okay\\ path/', Dir::UNIX);
     $test('/cygdrive/c/with/okay\\ path/', '/cygdrive/c/with/okay\\ path/', Dir::WINDOWS);
-    
+
+    $test('vfs:///project/src/', 'vfs:///project/src/', Dir::WINDOWS);
+    $test('vfs:///project/src/', 'vfs:///project/src/', Dir::UNIX);
+
+    $test('vfs://appstorage/', 'vfs://appstorage/', Dir::WINDOWS);
+    $test('vfs://appstorage/', 'vfs://appstorage/', Dir::UNIX);
+
+    $test('phar:///root/path/x.phar/src/', 'phar:///root/path/x.phar/src/', Dir::WINDOWS);
+    $test('phar:///root/path/x.phar/src/', 'phar:///root/path/x.phar/src/', Dir::UNIX);
+
+
     $test('\\\\psc-host\shared\www\webforge\\', '\\\\psc-host\shared\www\webforge\\', Dir::WINDOWS);
     $test('\\\\psc-host\\', '\\\\psc-host\\', Dir::WINDOWS);
 
