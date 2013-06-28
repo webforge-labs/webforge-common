@@ -21,6 +21,9 @@ class Dir {
   
   const WITHOUT_TRAILINGSLASH = 0x000001;
 
+  const WINDOWS_DRIVE_WINDOWS_STYLE = 0x000001;
+  const WINDOWS_DRIVE_UNIX_STYLE = 0x000002;
+
   const SORT_ALPHABETICAL = 2;
 
   const ORDER_ASC = 1024;
@@ -301,7 +304,7 @@ class Dir {
   public function wrapWith($wrapperName) {
     $this->wrapper = $wrapperName;
 
-    $this->prefix = $this->wrapper.'://'.$this->getOSPrefix(self::UNIX);
+    $this->prefix = $this->wrapper.'://'.$this->getOSPrefix(self::UNIX, self::WINDOWS_DRIVE_WINDOWS_STYLE);
 
     return $this;
   }
@@ -1018,11 +1021,16 @@ class Dir {
    * if prefix is absolute this ends with a slash or backslash
    * @return string
    */
-  protected function getOSPrefix($os) {
+  protected function getOSPrefix($os, $flags = self::WINDOWS_DRIVE_UNIX_STYLE) {
 
     $letter = NULL;
     if ($this->isWindowsDrivePrefix($letter)) {
-      $osPrefix  = $os === self::UNIX ? '/' : '';
+      $osPrefix = '';
+
+      if ($flags & self::WINDOWS_DRIVE_UNIX_STYLE && $os === self::UNIX) {
+        $osPrefix  .= '/';
+      }
+      
       $osPrefix .= $letter.':'.$this->getOSDS($os);
     } else {
       $osPrefix = $this->prefix;

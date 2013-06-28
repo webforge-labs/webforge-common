@@ -7,6 +7,7 @@ use BadMethodCallException;
 use InvalidArgumentException;
 use Psc\DateTime\DateTime;
 use Webforge\Common\Preg;
+use Webforge\Common\Exception\FileNotFoundException;
 
 /**
  * @todo refactor exceptions to be multi-lingual (english / german)
@@ -348,17 +349,6 @@ class File {
   }
   
   /**
-   * Returns the extension (if any) of a filename without the .
-   *
-   * @return string|NULL
-   */
-  public static function extractExtension($name) {
-    if (($pos = mb_strrpos($name,'.')) !== FALSE) {
-      return mb_substr($name, $pos+1);
-    }
-  }
-
-  /**
    * Returns the full name of the file (with or without extension)
    * 
    * @return string
@@ -369,7 +359,9 @@ class File {
     else
       return $this->name;
   }
-  
+
+
+
   /**
    * Sets the directory of the file
    * @param Dir $directory
@@ -452,6 +444,42 @@ class File {
       $this->extension = $extension;
 
     return $this;
+  }
+
+  /**
+   * Returns the extension (if any) of a filename without the .
+   *
+   * @return string|NULL
+   */
+  public static function extractExtension($name) {
+    if (($pos = mb_strrpos($name,'.')) !== FALSE) {
+      return mb_substr($name, $pos+1);
+    }
+  }
+
+  /**
+   * Returns the first file that exists with one of the given extensions
+   * 
+   * Dir contents:
+   *   thefile.js
+   *   thefile.php
+   *   thefile.csv
+   * 
+   * $dir->getFile('thefile')->findExtension(array('php', 'js', 'csv')); // returns thefile.php
+   * $dir->getFile('thefile')->findExtension(array('js', 'csv')); // returns thefile.js
+   * $dir->getFile('thefile')->findExtension(array('html', 'csv')); // returns thefile.csv
+   */
+  public function findExtension(Array $possibleExtensions) {
+    foreach ($possibleExtensions as $extension) {
+      $file = clone $this;
+      $file->setExtension($extension);
+
+      if ($file->exists()) {
+        return $file;
+      }
+    }
+
+    throw FileNotFoundException::fromFileAndExtensions($this, $possibleExtensions);
   }
 
   /**

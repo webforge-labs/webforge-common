@@ -2,17 +2,22 @@
 
 namespace Webforge\Common\System;
 
-class FileTest extends \Webforge\Common\TestCase {
+use org\bovigo\vfs\vfsStream;
+
+class FileTest extends \Webforge\Code\Test\Base {
   
   protected static $absPathPrefix;
   
   protected $dir, $dirPath;
-  
+
   public static function setUpBeforeClass() {
     self::$absPathPrefix = Util::isWindows() ? 'D:\\' : '/';
   }
   
   public function setUp() {
+    $this->chainClass = __NAMESPACE__.'\\File';
+    parent::setUp();
+
     $this->dirPath = self::absPath('path','to','some','dir');
     $this->dir = new Dir($this->dirPath);
   }
@@ -148,5 +153,60 @@ class FileTest extends \Webforge\Common\TestCase {
     $file->writeContents($otherContent);
     //$this->assertNotEquals(sha1($content), $file->getSha1());
     $this->assertEquals(sha1($otherContent), $file->getSha1());
+  }
+
+  protected function setupNoExtensionFile() {
+    $dir = vfsStream::setup('extension-files', NULL, array(
+      'thefile.php' => '<?php // its php',
+      'thefile.js' => 'define(function () {})',
+      'thefile.csv' => 'foo,bar,baz'
+    ));
+
+    $dir = new Dir(vfsStream::url('extension-files').'/');
+
+    return new File('thefile', $dir);
+  }
+
+  /**
+   * @dataProvider providefindExtension
+   */
+  public function testFindExtensionTestsSeveralExtensionsForFileNameForExistanceAndReturnsNewFileInstance(Array $extensions, $expectedFile) {
+    $noExtensionFile = $this->setupNoExtensionFile();
+
+    $extensionFile = $noExtensionFile->findExtension($extensions);
+
+    $this->assertChainable($extensionFile);
+    $this->assertNotSame($extensionFile, $noExtensionFile);
+
+    $this->assertEquals(
+      $expectedFile,
+      $extensionFile->getName(File::WITH_EXTENSION)
+    );
+  }
+
+  
+  public static function providefindExtension() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $test(array('php', 'js', 'csv'), 'thefile.php');
+    $test(array('js', 'php', 'csv'), 'thefile.js');
+    $test(array('csv', 'php', 'js'), 'thefile.csv');
+
+    $test(array('nil', 'php', 'js'), 'thefile.php');
+    $test(array('nil', 'nil2', 'js'), 'thefile.js');
+  
+    return $tests;
+  }
+
+  public function testFindExtensionThrowsExcetionIfNoExtensionIsFound() {
+    $noExtensionFile = $this->setupNoExtensionFile();
+
+    $this->setExpectedException('Webforge\Common\Exception\FileNotFoundException');
+
+    $noExtensionFile->findExtension(array('nil', 'nihil', 'none'));
   }
 }

@@ -88,7 +88,7 @@ class DirModifyPathTest extends PHPUnit_Framework_TestCase {
     }
     $dir = new Dir($path);
 
-    $this->assertEquals('file:///D:/wrong/path/', (string) $dir);
+    $this->assertEquals('file://D:/wrong/path/', (string) $dir);
   }
 
 
