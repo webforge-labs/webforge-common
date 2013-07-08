@@ -23,6 +23,7 @@ class Dir {
 
   const WINDOWS_DRIVE_WINDOWS_STYLE = 0x000001;
   const WINDOWS_DRIVE_UNIX_STYLE = 0x000002;
+  const WINDOWS_WITH_CYGWIN = 0x000004;
 
   const SORT_ALPHABETICAL = 2;
 
@@ -1009,10 +1010,10 @@ class Dir {
    * @return string
    * @param const $os self::WINDOWS|self::UNIX
    */
-  public function getOSPath($os) {
-    $osDS = $this->getOSDS($os);
+  public function getOSPath($os, $flags = 0x000000) {
+    $osDS = $this->getOSDS($os, $flags);
 
-    return $this->getOSPrefix($os).(empty($this->path) ? '' : implode($osDS, $this->path).$osDS);
+    return $this->getOSPrefix($os,$flags).(empty($this->path) ? '' : implode($osDS, $this->path).$osDS);
   }  
 
   /**
@@ -1021,17 +1022,23 @@ class Dir {
    * if prefix is absolute this ends with a slash or backslash
    * @return string
    */
-  protected function getOSPrefix($os, $flags = self::WINDOWS_DRIVE_UNIX_STYLE) {
+  protected function getOSPrefix($os, $flags = 0x000000) {
 
     $letter = NULL;
     if ($this->isWindowsDrivePrefix($letter)) {
       $osPrefix = '';
 
-      if ($flags & self::WINDOWS_DRIVE_UNIX_STYLE && $os === self::UNIX) {
-        $osPrefix  .= '/';
+      if (($flags & self::WINDOWS_WITH_CYGWIN) && $os === self::WINDOWS) {
+        $osPrefix .= '/cygdrive/'.mb_strtolower($letter).'/';
+      } else {
+
+        if (!($flags & self::WINDOWS_DRIVE_WINDOWS_STYLE) && $os === self::UNIX) {
+          $osPrefix  .= '/';
+        }
+
+        $osPrefix .= $letter.':'.$this->getOSDS($os);
       }
-      
-      $osPrefix .= $letter.':'.$this->getOSDS($os);
+
     } else {
       $osPrefix = $this->prefix;
     }
@@ -1053,8 +1060,8 @@ class Dir {
    * 
    * @return \ or /
    */
-  public function getOSDS($os) {
-    return ($this->isWrapped() || $this->isCygwin() || $os === self::UNIX) ? '/' : '\\';
+  public function getOSDS($os, $flags = 0x000000) {
+    return ($this->isWrapped() || $this->isCygwin() || ($flags & self::WINDOWS_WITH_CYGWIN) || $os === self::UNIX) ? '/' : '\\';
   }
 
   /**

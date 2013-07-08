@@ -63,12 +63,12 @@ class DirTest extends PHPUnit_Framework_TestCase {
   /**
    * @dataProvider provideDifferentPaths
    */
-  public function testgetOSPathReturnsPathForGivenOS($path, $expectedPath, $os) {
+  public function testgetOSPathReturnsPathForGivenOS($path, $expectedPath, $os, $flags = 0) {
     $dir = new Dir($path);
 
     $this->assertEquals(
       $expectedPath,
-      $dir->getOSPath($os)
+      $dir->getOSPath($os, $flags)
     );
   }
 
@@ -129,7 +129,25 @@ class DirTest extends PHPUnit_Framework_TestCase {
     // edge cases with exception?
     //$test('/var/local/www/', 'var\local\www\\', Dir::WINDOWS);
     //$test('\\\\psc-host\shared\www\webforge\\', '???', Dir::UNIX);
+    //$test('/var/local/www/', '/var/local/www/', Dir::WINDOWS, Dir::WINDOWS_WITH_CYGWIN);
+
+    // conversion to cygwin
+    $test('D:\www\webforge\\', '/cygdrive/d/www/webforge/', Dir::WINDOWS, Dir::WINDOWS_WITH_CYGWIN);
+
+    $test('its/relative/', 'its/relative/', Dir::UNIX, Dir::WINDOWS_WITH_CYGWIN);
+    $test('its/relative/', 'its/relative/', Dir::WINDOWS, Dir::WINDOWS_WITH_CYGWIN);
   
+    $test('/cygdrive/c/', '/cygdrive/c/', Dir::UNIX, Dir::WINDOWS_WITH_CYGWIN);
+    $test('/cygdrive/c/', '/cygdrive/c/', Dir::WINDOWS, Dir::WINDOWS_WITH_CYGWIN);
+
+    $test('/cygdrive/c/with/longer/path/', '/cygdrive/c/with/longer/path/', Dir::UNIX, Dir::WINDOWS_WITH_CYGWIN);
+    $test('/cygdrive/c/with/longer/path/', '/cygdrive/c/with/longer/path/', Dir::WINDOWS, Dir::WINDOWS_WITH_CYGWIN);
+
+    $test('/cygdrive/c/with/bad\\path/', '/cygdrive/c/with/bad/path/', Dir::UNIX, Dir::WINDOWS_WITH_CYGWIN);
+    $test('/cygdrive/c/with/bad\\path/', '/cygdrive/c/with/bad/path/', Dir::WINDOWS, Dir::WINDOWS_WITH_CYGWIN);
+
+    $test('/var/local/www/', '/var/local/www/', Dir::UNIX, Dir::WINDOWS_WITH_CYGWIN);
+
     return $tests;
   }
 

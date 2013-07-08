@@ -209,4 +209,21 @@ class FileTest extends \Webforge\Code\Test\Base {
 
     $noExtensionFile->findExtension(array('nil', 'nihil', 'none'));
   }
+
+  public function testGetOSPathIsCalledForDir() {
+    $file = new File(self::absPath('www', 'test', 'base', 'ka', 'auch').'test.php');
+    
+    $dir = new Dir(self::absPath('www', 'test', 'base', 'ka', 'auch'));
+    $filename = 'test.php';
+
+    $this->assertEquals(
+      $dir->getOSPath(Dir::WINDOWS).'test.php',
+      $file->getOSPath(File::WINDOWS)
+    );
+
+    $this->assertEquals(
+      $dir->getOSPath(Dir::UNIX).'test.php',
+      $file->getOSPath(File::UNIX)
+    );
+  }
 }

@@ -19,6 +19,9 @@ class File {
   const WITHOUT_EXTENSION = FALSE;
   const WITH_EXTENSION = TRUE;
 
+  const WINDOWS = Dir::WINDOWS;
+  const UNIX = Dir::UNIX;
+
   /**
    * Name of File without Extension
    * @var string 
@@ -392,6 +395,12 @@ class File {
     }
     
     return $str;
+  }
+
+  public function getOSPath($os) {
+    $dir = (string) $this->getDirectory()->getOSPath($os);
+
+    return $dir.$this->getName();
   }
 
   /**
