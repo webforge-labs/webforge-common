@@ -16,8 +16,8 @@ use LogicException;
  */
 class Dir {
 
-  const WINDOWS = 'windows';
-  const UNIX = 'unix';
+  const WINDOWS = 'WINDOWS';
+  const UNIX = 'UNIX';
   
   const WITHOUT_TRAILINGSLASH = 0x000001;
 
@@ -1078,6 +1078,15 @@ class Dir {
 
     return FALSE;
   }
+
+  /**
+   * Returns on Unix an Unix path and on Windows an Cygdrive compatible path
+   * 
+   * @return string
+   */
+  public function getUnixOrCygwinPath() {
+    return $this->getOSPath($this->getOS(), Dir::WINDOWS_WITH_CYGWIN);
+  }
   
   /**
    * Is the path to the other directory the same?
@@ -1127,13 +1136,13 @@ class Dir {
 
   /**
    * 
-   * @return string WINDOWS|UNIX
+   * @return const WINDOWS|UNIX
    */
   public function getOS() {
     if (mb_substr(PHP_OS, 0, 3) == 'WIN') {
-      $os = 'WINDOWS';
+      $os = self::WINDOWS;
     } else {
-      $os = 'UNIX';
+      $os = self::UNIX;
     }
     return $os;
   }

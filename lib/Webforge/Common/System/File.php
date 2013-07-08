@@ -397,8 +397,17 @@ class File {
     return $str;
   }
 
-  public function getOSPath($os) {
-    $dir = (string) $this->getDirectory()->getOSPath($os);
+  /**
+   * Returns on Unix an Unix path and on Windows an Cygdrive compatible path
+   * 
+   * @return string
+   */
+  public function getUnixOrCygwinPath() {
+    return $this->getOSPath($this->directory->getOS(), Dir::WINDOWS_WITH_CYGWIN);
+  }
+
+  public function getOSPath($os, $flags = 0x000000) {
+    $dir = $this->getDirectory()->getOSPath($os, $flags);
 
     return $dir.$this->getName();
   }
