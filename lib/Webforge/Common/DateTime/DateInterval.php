@@ -105,4 +105,3 @@ class DateInterval extends \DateInterval {
     return $this->format('%R Y%Y M%M D%D H%H I%I S%S');
   }
 }
-?>

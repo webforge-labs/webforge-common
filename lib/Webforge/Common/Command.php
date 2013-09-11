@@ -9,6 +9,7 @@ namespace Webforge\Common;
 interface Command {
   
   const WARNING = 'Webforge.Common.Command.Warning';
+  const INFO = 'Webforge.Common.Command.Info';
   
   /**
    * Run the actual command
