@@ -62,6 +62,13 @@ interface ExecutionSystem {
 
 
   /**
+   * Will just call the command as if it were called directly
+   * 
+   * useful to delegate interaction and output, but not to interact with the command
+   */
+  public function passthru($commandline, $options = NULL);
+
+  /**
    * @return self::WINDOWS or self::UNIX
    */
   public function getOperatingSystem();
