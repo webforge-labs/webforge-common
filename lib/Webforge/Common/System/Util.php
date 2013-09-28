@@ -66,7 +66,7 @@ class Util {
       $q = '"';
       $bs = '\\';
 
-      $escapedArg = $q.str_replace($q, $q.$bs, $arg).$q;
+      $escapedArg = $q.str_replace($q, $bs.$q, $arg).$q;
 
       if (S::endsWith($escapedArg, $bs.$q)) {
         $escapedArg = substr_replace($escapedArg, $bs.$bs.$q, -2);
