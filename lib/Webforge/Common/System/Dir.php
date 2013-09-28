@@ -21,8 +21,23 @@ class Dir {
   
   const WITHOUT_TRAILINGSLASH = 0x000001;
 
+  /**
+   * Represents path like D:\ converted to unix as D:/
+   */
   const WINDOWS_DRIVE_WINDOWS_STYLE = 0x000001;
+
+  /**
+   * Represents path like D:\ converted to unix as /D:/
+   * 
+   * (this is an alternative git path style)
+   */
   const WINDOWS_DRIVE_UNIX_STYLE = 0x000002;
+
+  /**
+   * Represents path like D:\ converted to unix as /cygdrive/d/
+   * 
+   * (this is an alternative git path style)
+   */
   const WINDOWS_WITH_CYGWIN = 0x000004;
 
   const SORT_ALPHABETICAL = 2;
@@ -164,18 +179,21 @@ class Dir {
       if (mb_strpos($parts[1], ':') === 1) {
         $this->prefix = mb_substr($parts[1], 0, 1).':\\';
         $this->path = array_slice($parts, 2, -1);
+        $driveStyle = self::WINDOWS_DRIVE_UNIX_STYLE;
       // windows drive as windows path C:/
       } elseif(mb_strpos($parts[0], ':') === 1) {
         $this->prefix = mb_substr($parts[0], 0, 1).':\\';
         $this->path = array_slice($parts, 1, -1);
+        $driveStyle = self::WINDOWS_DRIVE_WINDOWS_STYLE;
       } else {
         $this->path = array_slice($parts, 0, -1); // parts 0 maybe not empty for directory/ as rest of path
         if (mb_strpos($path, '/') === 0) {
           $this->prefix = '/';
         }
+        $driveStyle = self::WINDOWS_DRIVE_WINDOWS_STYLE;
       }
       
-      $this->wrapWith($wrapper);
+      $this->wrapWith($wrapper, $driveStyle);
     } elseif (self::isAbsolutePath($path)) {
 
       if (mb_strpos($path, '\\\\') === 0) {
@@ -302,10 +320,10 @@ class Dir {
    * 
    * @param string only the name of the wrapper like file or vfs or phar
    */
-  public function wrapWith($wrapperName) {
+  public function wrapWith($wrapperName, $driveStyle = NULL) {
     $this->wrapper = $wrapperName;
 
-    $this->prefix = $this->wrapper.'://'.$this->getOSPrefix(self::UNIX, self::WINDOWS_DRIVE_WINDOWS_STYLE);
+    $this->prefix = $this->wrapper.'://'.$this->getOSPrefix(self::UNIX, $driveStyle ?: self::WINDOWS_DRIVE_WINDOWS_STYLE);
 
     return $this;
   }

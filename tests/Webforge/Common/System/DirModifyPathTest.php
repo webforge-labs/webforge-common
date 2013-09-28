@@ -71,7 +71,7 @@ class DirModifyPathTest extends PHPUnit_Framework_TestCase {
     $wrappedPath = 'phar://'.$abs.'/matter/my.phar.gz/i/am/wrapped/';
     
     $dir = new Dir($wrappedPath);
-    $this->assertEquals($wrappedPath, (string) $dir);
+    $this->assertEquals($wrappedPath, (string) $dir, 'path is not parsed correctly');
     
     $this->assertTrue($dir->isWrapped());
     $this->assertEquals('phar', $dir->getWrapper());
@@ -116,12 +116,12 @@ class DirModifyPathTest extends PHPUnit_Framework_TestCase {
   
   public function testWrapWith_ChangesThePathToUnixStyle() {
     if (DIRECTORY_SEPARATOR === '\\') {
-      $abs = 'D:\path\does\point\\';
+      $abs = 'D:\path\does\point\\'; // this is windows style for windows path
     } else {
       $abs = '/path/does/point/';
     }
 
-    $absUnix = Dir::factory($abs)->getOSPath(Dir::UNIX);
+    $absUnix = Dir::factory($abs)->getOSPath(Dir::UNIX, Dir::WINDOWS_DRIVE_WINDOWS_STYLE); // so we have to provide it here
 
     $abs .= 'to'.DIRECTORY_SEPARATOR.'target'.DIRECTORY_SEPARATOR;
 
