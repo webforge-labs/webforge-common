@@ -13,8 +13,6 @@
     "ext-mbstring": "*",
     
     "symfony/console": "2.1.*@stable",
-    "symfony/process": "2.1.*@stable",
-
     "webforge/collections": "1.0.*@dev"
   },
   "require-dev": {
