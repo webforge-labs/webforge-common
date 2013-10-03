@@ -51,7 +51,7 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
     A::insert($array, 'f-2', -2); // before position -2
     $this->assertEquals(array('f0','f1','f2','f3','fbL','f-2','f4','fL'), $array);
   }
-  
+
   public function testInsert0PrependsToArray() {
     $array = array('two');
     
@@ -59,13 +59,33 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(array('one','two'), $array);
   }
   
-  public function testInsertWithEndConstant() {
-    $array = array(0,2,3);
-    A::insert($array, 1, A::END-2);
-    
-    $this->assertEquals(array(0,1,2,3), $array);
+  public function testIRemoveWithMatch_RemovesTheElement() {
+    $array = array('0','1','2','3');
+    A::remove($array, '1');
+
+    $this->assertEquals(array('0', '2', '3'), $array);
   }
 
+  public function testRemoveWithNoMatch_RemovesTheElement_searchStrictEnabledPerDefault() {
+    $array = array('0','1','2','3');
+    A::remove($array, 1); // searchstrict per default
+
+    $this->assertEquals(array('0', '1', '2', '3'), $array);
+  }
+
+  public function testRemoveWithMatch_RemovesTheElement_searchStrictCanBeDisabled() {
+    $array = array('0','1','2','3');
+    A::remove($array, 1, $searchStrict = FALSE); // searchstrict per default
+
+    $this->assertEquals(array('0', '2', '3'), $array);
+  }
+
+  public function testRemovesOnlyFirstMatchFromArray() {
+    $array = array('0','1','2','3', '1');
+    A::remove($array, '1');
+
+    $this->assertEquals(array('0', '2', '3', '1'), $array);
+  }
 
   public function testInsertArrayPositiveIndexInsertsBeforeIndex() {
     $array = array(0,1,4,5);

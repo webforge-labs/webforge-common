@@ -138,7 +138,16 @@ class ArrayUtil {
     $subject = array_merge($left,$array,$right);
     return $subject;
   }
-  
+ 
+  /**
+   * Remove an element from an array
+   * 
+   * the item is searched and removed, numeric arrays are renumbered
+   * only the first item matched will be removed
+   * @TODO FIXME: boolean trap
+   * @param bool $searchStrict if false only the value will be replace
+   * @return array
+   */  
   public static function remove(Array &$array, $item, $searchStrict = TRUE) {
     if (($key = array_search($item, $array, $searchStrict)) !== FALSE) {
       array_splice($array, $key, 1);
