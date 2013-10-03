@@ -9,8 +9,6 @@ interface Macro {
    */
   public function getCommands();
   
-  
-  public function execute();
+  public function execute(CommandOutput $output);
   
 }
-?>

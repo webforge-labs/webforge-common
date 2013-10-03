@@ -14,7 +14,7 @@ interface Command {
   /**
    * Run the actual command
    */
-  public function execute();
+  public function execute(CommandOutput $output);
   
   /**
    * Return a textual Representation of the command
@@ -22,4 +22,3 @@ interface Command {
    */
   public function describe();
 }
-?>
