@@ -4,7 +4,7 @@ namespace Webforge\Common\System;
 
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\ProcessUtils;
-use Webforge\Common\String as S;
+use Webforge\Common\Preg;
 
 class Util {
 
@@ -51,6 +51,8 @@ class Util {
    * @return string
    */
   public static function escapeShellArg($arg, $escapeFor = NULL) {
-    return \Symfony\Component\Process\ProcessUtils::escapeArgument($arg);
+    $escaped = \Symfony\Component\Process\ProcessUtils::escapeArgument($arg);
+
+    return Preg::replace($escaped, '~(?<!\\\\)\\\\"$~', '\\\\\\"');
   }
 }

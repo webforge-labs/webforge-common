@@ -25,4 +25,8 @@ class UtilTest extends \Webforge\Code\Test\Base {
     $v = mb_substr(PHP_VERSION, 0, 1);
     $this->assertStringStartsWith('PHP '.$v, $output[0], 'should find a PHP '.$v.' Interpreter');
   }
+
+  public function testEscapeShellArgRegressionWithQuotedBackslashAtTheEnd() {
+    $this->assertEquals('"D:\www\some\directory\\\\"', Util::escapeShellArg('D:\www\some\directory\\'));
+  }
 }
