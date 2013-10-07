@@ -27,6 +27,10 @@ class UtilTest extends \Webforge\Code\Test\Base {
   }
 
   public function testEscapeShellArgRegressionWithQuotedBackslashAtTheEnd() {
-    $this->assertEquals('"D:\www\some\directory\\\\"', Util::escapeShellArg('D:\www\some\directory\\'));
+    if (Util::isWindows()) {
+      $this->assertEquals('"D:\www\some\directory\\\\"', Util::escapeShellArg('D:\www\some\directory\\'));
+    } else {
+      $this->markTestSkipped('Undefined for unix');
+    }
   }
 }
