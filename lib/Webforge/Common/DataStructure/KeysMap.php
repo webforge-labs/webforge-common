@@ -8,6 +8,7 @@ use Webforge\Common\Util;
 /**
  * A map from a variable number of keys to values
  * 
+ * @TODO refactor into collections?
  */
 class KeysMap {
   
