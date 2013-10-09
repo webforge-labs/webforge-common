@@ -148,11 +148,6 @@ class Url {
     return $this;
   }
   
-  public function setHostParts(Array $parts) {
-    $this->hostParts = $parts;
-    return $this;
-  }
-  
   /**
    * @return SimpleURL
    */
@@ -177,7 +172,12 @@ class Url {
   public function getHostParts() {
     return $this->hostParts;
   }
-  
+
+  public function setHostParts(Array $parts) {
+    $this->hostParts = $parts;
+    return $this;
+  }
+    
   /**
    * @return array
    */
@@ -325,6 +325,22 @@ class Url {
    */
   public function setPassword($password) {
     $this->password = $password;
+    return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getPathTrailingSlash() {
+    return $this->pathTrailingSlash;
+  }
+  
+  /**
+   * @param mixed pathTrailingSlash
+   * @chainable
+   */
+  public function setPathTrailingSlash($pathTrailingSlash) {
+    $this->pathTrailingSlash = $pathTrailingSlash;
     return $this;
   }
   

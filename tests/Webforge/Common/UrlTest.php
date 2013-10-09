@@ -196,4 +196,16 @@ class UrlTest extends \Webforge\Code\Test\Base {
   public function testNoPartsException() {
     new Url('myproject.dev1.domain');
   }
+
+
+  public function testPathTrailingSlashCanBeSet() {
+    $url = new Url($s = 'https://www.google.com/analytics');
+    $url->setPathTrailingSlash(TRUE);
+
+    $this->assertEquals((string) $url, $s.'/');
+
+    $url->setPathTrailingSlash(FALSE);
+
+    $this->assertEquals((string) $url, $s);
+  }
 }
