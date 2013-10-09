@@ -26,7 +26,10 @@ class ExecutableFinderTest extends \Webforge\Code\Test\Base {
     
     $this->assertInstanceOf('Webforge\Common\System\File', $rarBin);
     $this->assertFileEquals($this->rar, $rarBin);
+  }
 
+  public function testFindsExecutableReturnsBool() {
+    $this->assertFalse($this->finder->findsExecutable('undefined'));
   }
 
   public function testDoesNotFindExecutableWhichIsInConfigButDoesNotExist() {

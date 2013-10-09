@@ -45,7 +45,7 @@ class ExecutableFinder {
       $file = $this->getExecutable($name);
       return TRUE;
     
-    } catch (NoExecutableFoundException $e) {
+    } catch (ExecutableNotFoundException $e) {
       return FALSE;
     }
   }
