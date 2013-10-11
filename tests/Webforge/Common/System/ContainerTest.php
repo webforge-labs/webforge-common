@@ -11,6 +11,7 @@ class ContainerTest extends \Webforge\Code\Test\Base {
     parent::setUp();
 
     $this->config = m::mock(__NAMESPACE__.'\ContainerConfiguration');
+    $this->config->shouldReceive('forExecutableFinder')->andReturn(array())->byDefault();
     $this->container = new Container($this->config);
     
     $this->systemInterface = __NAMESPACE__.'\System';

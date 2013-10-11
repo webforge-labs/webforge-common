@@ -60,6 +60,20 @@ interface ExecutionSystem {
    */
   public function process($commandline, $options = NULL);
 
+  /**
+   * Returns an empty ProcessBuilder
+   *
+   * @return Webforge\Process\ProcessBuilder
+   */
+  public function buildProcess();
+
+
+  /**
+   * Returns a ProcessBuilder with the first argument as the php binary file
+   * 
+   * @return Webforge\Process\ProcessBuilder
+   */
+  public function buildPHPProcess();
 
   /**
    * Will just call the command as if it were called directly
