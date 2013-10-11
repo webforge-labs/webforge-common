@@ -130,5 +130,12 @@ class DirModifyPathTest extends PHPUnit_Framework_TestCase {
 
     $this->assertEquals('vfs://'.$absUnix.'to/target/', (string) $dir);
   }
+
+  public function testGetDirWithoutTrailingSlash() {
+    $this->assertEquals(
+      rtrim(__DIR__, DIRECTORY_SEPARATOR), 
+      Dir::factoryTS(__DIR__)->getPath(Dir::WITHOUT_TRAILINGSLASH)
+    );
+  }
 }
  

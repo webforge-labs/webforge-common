@@ -1011,10 +1011,12 @@ class Dir {
    * the path is returned for the current Operating System
    * @return string
    */
-  public function getPath() {
+  public function getPath($flags = 0x000000) {
     $ds = $this->getDS();
 
-    return $this->prefix.(empty($this->path) ? '' : implode($ds, $this->path).$ds);
+    $trail = $flags & self::WITHOUT_TRAILINGSLASH ? '' : $ds;
+
+    return $this->prefix.(empty($this->path) ? '' : implode($ds, $this->path).$trail);
   }
 
   /**
