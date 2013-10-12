@@ -2,7 +2,7 @@
 
 namespace Webforge\Common\Mock;
 
-use Webforge\Common\DataStructure\KeysMap;
+use Webforge\Collections\KeysMap;
 
 class Session implements \Webforge\Common\Session {
 

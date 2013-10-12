@@ -33,6 +33,6 @@ class SessionTest extends \Webforge\Code\Test\Base {
   }
 
   public function testUnwrapsKeyMapForOtherDirtyTests() {
-    $this->assertInstanceOf('Webforge\Common\DataStructure\KeysMap', $this->session->getKeysMap());
+    $this->assertInstanceOf('Webforge\Collections\KeysMap', $this->session->getKeysMap());
   }
 }
