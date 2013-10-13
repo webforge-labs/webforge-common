@@ -5,7 +5,7 @@ namespace Webforge\Common\System;
 use Webforge\Common\Util AS Code;
 use BadMethodCallException;
 use InvalidArgumentException;
-use Psc\DateTime\DateTime;
+use Webforge\Common\DateTime\DateTime;
 use Webforge\Common\Preg;
 use Webforge\Common\Exception\FileNotFoundException;
 
@@ -439,9 +439,17 @@ class File {
   }
 
   /**
+   * @discouraged
    * @return DateTime
    */
   public function getCreateTime() {
+    return $this->getCreationTime();
+  }
+
+  /**
+   * @return DateTime
+   */
+  public function getCreationTime() {
     if (!$this->exists()) throw new Exception('Kann keine ctime für eine Datei zurückgeben die nicht existiert. '.$this);
     return new Datetime(filectime((string) $this));
   }
