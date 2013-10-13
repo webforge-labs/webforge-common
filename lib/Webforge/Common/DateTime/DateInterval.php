@@ -68,10 +68,10 @@ class DateInterval extends \DateInterval {
   }
   
   /**
-   * Nimmt eine internal::DateInterval und führt dieses in ein PscDateInterval über
+   * Create a DateInterval from an PHP Dateinterval
    * 
    * @param DateInterval $interval
-   * @return PscDateInterval
+   * @return DateInterval
    */
   public static function createFromDateInterval(\DateInterval $interval) {
     if ($interval instanceof DateInterval) return $interval;

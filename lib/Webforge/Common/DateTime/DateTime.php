@@ -4,6 +4,8 @@ namespace Webforge\Common\DateTime;
 
 use DateTimeZone;
 use Webforge\Common\Util AS Code;
+use Webforge\Common\Exception;
+use InvalidArgumentException;
 
 class DateTime extends \DateTime {
   
@@ -24,7 +26,7 @@ class DateTime extends \DateTime {
   
   public function __construct($time = NULL, DateTimeZone $object = NULL) {
     if (isset($object)) {
-      throw new \Psc\Exception('Timezone im Constructor setzen geht nicht in PHP 5.3');
+      throw new Exception('Timezone im Constructor setzen geht nicht in PHP 5.3');
     }
     
     if ($time instanceof \DateTime) {
@@ -56,7 +58,7 @@ class DateTime extends \DateTime {
   }
   
   /**
-   * @return PscDateTime
+   * @return DateTime
    */
   public static function factory($time = NULL, DateTimeZone $object = NULL) {
     return new DateTime($time, $object);
@@ -155,7 +157,7 @@ class DateTime extends \DateTime {
    * Wollen wir den Montag des Sonntages liegt das Datum in der Vergangenheit
    * 
    * ist heute also Sonntag der 20.3.2011 und der Parameter ist MON gibt Funktion Montag den 14.03.2011 zurück (gleiche Uhrzeit wie jetzt)
-   * @return PscDateTime
+   * @return DateTime
    */
   public function getWeekday($day) {
     
@@ -243,15 +245,6 @@ class DateTime extends \DateTime {
                 );
   }
   
-  
-  public function getWalkableType($field) {
-    if ($field === 'date') {
-      return \Psc\Data\Type\Type::create('Integer');
-    } elseif ($field === 'timezone') {
-      return \Psc\Data\Type\Type::create('String');
-    }
-  }
-  
   public function export() {
     return (object) array(
       'date'=>$this->format('U'),
@@ -268,7 +261,7 @@ class DateTime extends \DateTime {
    * @param int $year unbedingt ein int
    */
   public function setYear($year) {
-    if (!is_int($year)) throw new \InvalidArgumentException('Parameter 1 muss ein Integer sein');
+    if (!is_int($year)) throw new InvalidArgumentException('Parameter 1 muss ein Integer sein');
     $this->setDate($year, $this->getMonth(), $this->getDay()); // das ist die PHP Funktion
     return $this;
   }
