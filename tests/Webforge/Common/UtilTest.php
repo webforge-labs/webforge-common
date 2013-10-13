@@ -4,6 +4,7 @@ namespace Webforge\Common;
 
 use stdClass;
 use ArrayIterator;
+use Webforge\Collections\TraversableCollection;
 
 class UtilTest extends TestCase {
   
