@@ -250,7 +250,7 @@ class File {
   public function copy($destination) {
     
     if (!$this->exists()) {
-      throw new Exception('Quelle von copy existiert nicht. '.$this);
+      throw new Exception('Source from copy does not exist: '.$this);
     }
     
     if ($destination instanceof Dir) {
@@ -260,13 +260,13 @@ class File {
     }
 
     if (!$destination->getDirectory()->exists()) {
-      throw new Exception('Das Verzeichnis des Zieles existiert nicht: '.$destination->getDirectory());
+      throw new Exception('The directory from the destination file does not exist: '.$destination);
     }
 
     $ret = @copy((string) $this, (string) $destination);
 
     if (!$ret) {
-      throw new Exception('Fehler beim Kopieren von '.$this.' zu '.$destination);
+      throw new Exception('PHP Error while copying '.$this.' onto '.$destination);
     }
     
     return $this;
