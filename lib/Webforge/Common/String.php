@@ -3,9 +3,9 @@
 namespace Webforge\Common;
 
 class String {
-	
-	const END = 'end';
-	const START = 'start';
+  
+  const END = 'end';
+  const START = 'start';
   
   const DOUBLE_QUOTE = '"';
   const SINGLE_QUOTE = "'";
@@ -62,7 +62,7 @@ class String {
       return $prefix.str_replace($eol, $eol.$prefix, $msg);
     }
   }
-	
+  
   /**
    * Number the lines in the string
    *
@@ -70,28 +70,28 @@ class String {
    * @param string $eol the eol from $code
    * @param int $begin the number of the first line found
    * @return string
-   */	
-	public static function lineNumbers($code, $eol = "\n", $begin = 1) {
-		$cut = FALSE;
-		if (!static::endsWith($code, $eol)) {
-			$code .= $eol;
-			$cut = -mb_strlen($eol);
-		}
-		$lines = mb_substr_count($code, $eol);
-		$padWhite = mb_strlen((string) $lines); // darstellung der größten zeilen-nummer als string
-		$cnt = $begin;
-		$linedCode = Preg::replace_callback($code, '/(.*?)'.$eol.'/',
-			function ($match) use (&$cnt, $padWhite) {
-				return sprintf('%s %s', String::padRight((string) $cnt++, $padWhite,' '), $match[0]);
-			}
-		);
-		
-		if ($cut !== FALSE) {
-			return mb_substr($linedCode, 0, $cut);
-		}	else {
-			return $linedCode;
-		}
-	}
+   */ 
+  public static function lineNumbers($code, $eol = "\n", $begin = 1) {
+    $cut = FALSE;
+    if (!static::endsWith($code, $eol)) {
+      $code .= $eol;
+      $cut = -mb_strlen($eol);
+    }
+    $lines = mb_substr_count($code, $eol);
+    $padWhite = mb_strlen((string) $lines); // darstellung der größten zeilen-nummer als string
+    $cnt = $begin;
+    $linedCode = Preg::replace_callback($code, '/(.*?)'.$eol.'/',
+      function ($match) use (&$cnt, $padWhite) {
+        return sprintf('%s %s', String::padRight((string) $cnt++, $padWhite,' '), $match[0]);
+      }
+    );
+    
+    if ($cut !== FALSE) {
+      return mb_substr($linedCode, 0, $cut);
+    } else {
+      return $linedCode;
+    }
+  }
     
   /**
    * Cuts the text (hard) at the given position, if its longer than given length
@@ -106,24 +106,24 @@ class String {
     }
     return $string;
   }
-	
-	/**
+  
+  /**
    * Cuts at a specific char if string is longer than given length
    *
    * acts like cut, but when the string is longer then $length it is search backwards
    * until $atChar is found and cut at this position.
-	 *
-	 * the common case is to wordwrap at whitespace (inbetween two words)
-	 * 
-	 * $teaser = S::cutAtLast($longText, 300, " ");
-	 */
-	public static function cutAtLast($string, $length, $atChar, $ender = '…') {
-		$length = (int) $length;
-		if (($slength = mb_strlen($string)) > $length) {
-			$string = mb_substr($string, 0, mb_strrpos($string, $atChar, $length-$slength)).$ender; // -x means: search backwards from x of end of string
-		}
-		return $string;
-	}
+   *
+   * the common case is to wordwrap at whitespace (inbetween two words)
+   * 
+   * $teaser = S::cutAtLast($longText, 300, " ");
+   */
+  public static function cutAtLast($string, $length, $atChar, $ender = '…') {
+    $length = (int) $length;
+    if (($slength = mb_strlen($string)) > $length) {
+      $string = mb_substr($string, 0, mb_strrpos($string, $atChar, $length-$slength)).$ender; // -x means: search backwards from x of end of string
+    }
+    return $string;
+  }
   
   /**
    * Generates a Random string from specific length
@@ -132,17 +132,17 @@ class String {
    * @return string
    */
   public static function random($length) {
-  	if ($length <= 0) return '';
-  	$str = '';
-  	for ($i = 0; $i < $length; $i++) {
-  	  $rand = rand(0, 35);
-  	  if ($rand >= 10)
-        $str .= chr(ord('a') + $rand-10);	// a - z
-  	  else
-        $str .= chr(ord('0') + $rand);		// 0 - 9
-  	}
+    if ($length <= 0) return '';
+    $str = '';
+    for ($i = 0; $i < $length; $i++) {
+      $rand = rand(0, 35);
+      if ($rand >= 10)
+        $str .= chr(ord('a') + $rand-10); // a - z
+      else
+        $str .= chr(ord('0') + $rand);    // 0 - 9
+    }
     
-  	return $str;
+    return $str;
   }
   
   /**
@@ -239,15 +239,15 @@ class String {
    * @return string
    */
   public static function expand($string, $withString, $type = self::END) {
-		if ($type === self::END) {
-	    if (!self::endsWith($string, $withString)) {
-	      $string .= $withString;
-	    }
-		} elseif ($type === self::START) {
-	    if (!self::startsWith($string, $withString)) {
-	      $string = $withString.$string;
-	    }
-		}
+    if ($type === self::END) {
+      if (!self::endsWith($string, $withString)) {
+        $string .= $withString;
+      }
+    } elseif ($type === self::START) {
+      if (!self::startsWith($string, $withString)) {
+        $string = $withString.$string;
+      }
+    }
     return $string;
   }
   
