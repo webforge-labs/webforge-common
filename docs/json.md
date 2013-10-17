@@ -21,6 +21,17 @@ $jsonc = new JSONConverter();
 $jsonc->stringify($object, JSONConveter::PRETTY_PRINT)
 ```
 
+Catch parsing errors
+```php
+use Webforge\Common\JS\JSONParsingException;
+
+try {
+  $object = JSONConverter::create()->parseFile(new File('composer.json'));
+} catch (JSONParsingException $e) (
+  // error handling
+}
+```
+
 ## use with files
 ```php
 use Webforge\Common\JS\JSONFile;
