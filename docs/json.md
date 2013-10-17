@@ -27,7 +27,7 @@ use Webforge\Common\JS\JSONParsingException;
 
 try {
   $object = JSONConverter::create()->parseFile(new File('composer.json'));
-} catch (JSONParsingException $e) (
+} catch (JSONParsingException $e) {
   // error handling
 }
 ```
@@ -49,12 +49,4 @@ print $jsonFile
 $jsonFile->modify(function($json) {
   $json->name = 'webforge/new-common';
 });
-```
-
-```php
-
-```
-
-```php
-
 ```
