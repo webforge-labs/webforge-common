@@ -2,6 +2,9 @@
 
 namespace Webforge\Common;
 
+use ReflectionClass;
+use InvalidArgumentException;
+
 class ClassUtil {
 
   /**
@@ -42,5 +45,24 @@ class ClassUtil {
     }
 
     return $fqn;
+  }
+
+  /**
+   * 
+   * @param string $class the full qualified class name
+   * @return instanceOf $class
+   */
+  public static function newClassInstance($class, Array $constructorArgs) {
+    if ($class instanceof ReflectionClass) {
+      $refl = $class;
+
+    } elseif (is_string($class)) {
+      $refl = new ReflectionClass($class);
+      
+    } else {
+      throw new InvalidArgumentException('class can only be of ReflectionClass or String');
+    }
+    
+    return $refl->newInstanceArgs($constructorArgs);
   }
 }
