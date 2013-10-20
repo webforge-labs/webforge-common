@@ -53,7 +53,6 @@ class CodeWriterTest extends \Webforge\Code\Test\Base {
     // exceptions: alles was nicht wirklich einfach ist => error
     $ex($badType, array());
     $ex($badType, (object) array('blubb'));
-    $ex($badType, new \Psc\DataInput());
     
     return $tests;
   }
@@ -119,10 +118,9 @@ class CodeWriterTest extends \Webforge\Code\Test\Base {
    * @dataProvider provideTestExportListException
    */
   public function testExportListException($exceptionClass, $export) {
-    $codeWriter = $this->codeWriter;
-    $this->assertException($exceptionClass, function () use ($export, $codeWriter) {
-      $codeWriter->exportList($export);
-    });
+    $this->setExpectedException($exceptionClass);
+
+    $this->codeWriter->exportList($export);
   }
   
   public static function provideTestExportListException() {
@@ -130,9 +128,9 @@ class CodeWriterTest extends \Webforge\Code\Test\Base {
     $ex = function () use (&$tests) {
       $tests[] = func_get_args();
     };
-    $badType = 'Psc\Code\Generate\BadExportTypeException';
+    $badType = 'RuntimeException';
     
-    $complexObject = new \Psc\Exception('this is to complex to export');
+    $complexObject = new Exception('this is to complex to export');
 
     $ex($badType,
          array($complexObject)
@@ -164,9 +162,9 @@ class CodeWriterTest extends \Webforge\Code\Test\Base {
     
     $simpleTest = function ($parametersPHP, Array $parameters) use ($test, &$tests) {
       $test('new \Psc\Code\Generate\Simple('.$parametersPHP.')',
-            new GClass('Psc\Code\Generate\Simple'),
-            $parameters
-          );
+        new PHPClass('Psc\Code\Generate\Simple'),
+        $parameters
+      );
     };
     
     $simpleTest(

@@ -7,11 +7,14 @@ use Webforge\Common\ArrayUtil AS A;
 use Webforge\Common\String as S;
 use Webforge\Common\ClassInterface;
 use Webforge\Common\PHPClass;
+use RuntimeException;
 
 /**
  * @deprecated dont use this class yet
+ * 
+ * implements \Webforge\Types\Adapters\CodeWriter it does this but i dont want to pull in dependencies for (only) this
  */
-class CodeWriter implements \Webforge\Types\Adapters\CodeWriter {
+class CodeWriter {  
 
   public static function create() {
     return new static();
@@ -115,11 +118,10 @@ class CodeWriter implements \Webforge\Types\Adapters\CodeWriter {
   
   /**
    * @return string
-   * @throws BadExportTypeException
    */
   public function exportBaseTypeValue($value) {
     if (!$this->isBaseType($value)) {
-      throw new BadExportTypeException('export kann keine Komplexen Datentypen wie: '.gettype($value).' exportieren');
+      throw new RuntimeException('export kann keine Komplexen Datentypen wie: '.gettype($value).' exportieren');
     }
     
     return var_export($value, TRUE);
