@@ -47,14 +47,22 @@ class JSONConverter {
     }
     
     if (empty($data)) {
-      $parser = new JsonParser();
-      $parsingException = $parser->lint($json);
 
-      throw new JSONParsingException(
-        sprintf("JSONConverter: %s", $parsingException->getMessage()),
-        0,
-        $parsingException
-      );
+      $error = json_last_error();
+
+      if ($error === JSON_ERROR_SYNTAX || $error === JSON_ERROR_CTRL_CHAR) {
+        $parser = new JsonParser();
+        $parsingException = $parser->lint($json);
+
+        throw new JSONParsingException(
+          sprintf("JSONConverter: %s", $parsingException->getMessage()),
+          0,
+          $parsingException
+        );
+        
+      } else {
+        throw new JSONParsingException(sprintf('JSON error parsing string: '.$this->errors[$error]));
+      }
     }
     
     return $data;
