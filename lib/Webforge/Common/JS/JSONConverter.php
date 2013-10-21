@@ -55,9 +55,7 @@ class JSONConverter {
         $parsingException = $parser->lint($json);
 
         throw new JSONParsingException(
-          sprintf("JSONConverter: %s", $parsingException->getMessage()),
-          0,
-          $parsingException
+          sprintf("JSONConverter: %s", $parsingException->getMessage())
         );
         
       } else {
