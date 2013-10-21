@@ -4,6 +4,7 @@ namespace Webforge\Common\JS;
 
 use Webforge\Common\System\File;
 use Webforge\Common\String AS S;
+use Seld\JsonLint\JsonParser;
 
 class JSONConverter {
   
@@ -46,8 +47,13 @@ class JSONConverter {
     }
     
     if (empty($data)) {
+      $parser = new JsonParser();
+      $parsingException = $parser->lint($json);
+
       throw new JSONParsingException(
-        sprintf("JSON Parse Error: %s für JSON-String: '%s' ", $this->errors[json_last_error()], S::cut($json,100,'...'))
+        sprintf("JSONConverter: %s", $parsingException->getMessage()),
+        0,
+        $parsingException
       );
     }
     

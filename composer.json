@@ -13,7 +13,9 @@
     "ext-mbstring": "*",
     
     "webforge/collections": "1.0.*@stable",
-    "webforge/process": "1.0.*@beta"
+    "webforge/process": "1.0.*@beta",
+
+    "seld/jsonlint": "1.1.*@stable"
   },
   "require-dev": {
     "webforge/testplate": ">=1.3",

@@ -321,4 +321,3 @@ class ArrayUtil {
     return array_map(function ($item) { return (string) $item; }, $items);
   }
 }
-?>

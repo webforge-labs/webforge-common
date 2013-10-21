@@ -88,7 +88,30 @@ class JSONConverterTest extends \Webforge\Common\TestCase {
   
   public function testWrongJSONTHrowsAJSONParsingException() {
     $this->setExpectedException('Webforge\Common\JS\JSONParsingException');
-    $this->converter->parse('[erroneous');
+
+    try {
+      $this->converter->parse(<<<'JSON'
+{
+  "name": "webforge/common",
+  "type": "library",
+  "description": "Boilerplate for Webforge and Psc - CMS",
+  "keywords": ["framework"],
+  "homepage": "http://github.com/pscheit/webforge-common",
+  "license": "MIT",
+  "authors": [
+    {"name": "Philipp Scheit", "email": "p.scheit@ps-webforge.com"}
+  ],
+  "require": {
+    "php": ">=5.3.2",
+    "ext-mbstring": "*",
+  }
+}
+JSON
+      );
+    } catch (JSONParsingException $e) {
+      $this->assertContains('Parse error on line 13:', $e->getMessage());
+      throw $e;
+    }
   }
 
   public function testParseThrowsExceptionWhenEmptyAsserted() {
