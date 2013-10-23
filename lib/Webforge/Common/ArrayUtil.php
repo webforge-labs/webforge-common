@@ -320,4 +320,30 @@ class ArrayUtil {
   public static function stringify(Array $items) {
     return array_map(function ($item) { return (string) $item; }, $items);
   }
+
+  /**
+   * Filters the keys and values from an array
+   * 
+   * there is only one callback allowed that should return truthy if the value SHOULD exist in the new array
+   * the first parameter of the callback is the key and the second is the key
+   * 
+   * but this function has the keys passed as second parameter
+   * the new array is NOT renumbered
+   * 
+   * @param array $array will not be modified
+   * @param closure $filter bool function($key, $value)
+   * @return array with same keys as the input array (if not filtered)
+   */
+  public static function filterKeys(Array $array, Closure $filter) {
+    $filtered = array();
+    //@TODO maybe something with array_filter as callback is faster here? benchmark?
+
+    foreach ($array as $key => $value) {
+      if ($filter($key, $value)) {
+        $filtered[$key] = $value;
+      }
+    }
+
+    return $filtered;
+  }
 }

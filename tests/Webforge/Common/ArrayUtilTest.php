@@ -358,5 +358,25 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
     
     return $tests;
   }
+
+  public function testArrayFilterForKeys() {
+    $headers = array(
+      'Content-Type'=>'application/json',
+      'Content-Length'=>723,
+      'Accept'=>'*/*'
+    );
+
+    $filter = function($headerName, $headerValue) {
+      return $headerName != 'Content-Length';
+    };
+
+    $this->assertEquals(
+      array(
+        'Content-Type'=>'application/json',
+        'Accept'=>'*/*'
+      ),
+      A::filterKeys($headers, $filter),
+      'A::filterKeys does not filter'
+    );
+  }
 }
-?>
