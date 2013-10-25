@@ -8,33 +8,53 @@ class PHPClassTest extends \Webforge\Code\Test\Base {
     $this->chainClass = __NAMESPACE__ . '\\PHPClass';
     parent::setUp();
 
-    $this->gClass = new PHPClass(__CLASS__);
+    $this->phpClass = new PHPClass(__CLASS__);
   }
 
   public function testImplementsClassInterface() {
-    $this->assertInstanceOf('Webforge\Common\ClassInterface', $this->gClass);
+    $this->assertInstanceOf('Webforge\Common\ClassInterface', $this->phpClass);
   }
 
   public function testNamespaceAndNameAndFQNAreSetFromFQNString() {
-    $this->assertEquals(__CLASS__, $this->gClass->getFQN());
-    $this->assertEquals('PHPClassTest', $this->gClass->getName());
-    $this->assertEquals(__NAMESPACE__, $this->gClass->getNamespace());
+    $this->assertEquals(__CLASS__, $this->phpClass->getFQN());
+    $this->assertEquals('PHPClassTest', $this->phpClass->getName());
+    $this->assertEquals(__NAMESPACE__, $this->phpClass->getNamespace());
   }
 
   public function testReflectionClassIsReturned() {
-    $this->assertInstanceOf('ReflectionClass', $this->gClass->getReflection());
+    $this->assertInstanceOf('ReflectionClass', $this->phpClass->getReflection());
   }
 
   public function testReflectionIsCached() {
-    $refl = $this->gClass->getReflection();
-    $this->assertSame($refl, $this->gClass->getReflection());
+    $refl = $this->phpClass->getReflection();
+    $this->assertSame($refl, $this->phpClass->getReflection());
   }
 
   public function testReflectionIsChangedWhenFQNIsChanged() {
-    $refl = $this->gClass->getReflection();
+    $refl = $this->phpClass->getReflection();
 
-    $this->gClass->setName('PHPClass');
+    $this->phpClass->setName('PHPClass');
 
-    $this->assertNotSame($refl, $this->gClass->getReflection(), 'reflection should be refreshed fro setName');
+    $this->assertNotSame($refl, $this->phpClass->getReflection(), 'reflection should be refreshed fro setName');
+  }
+
+  public function testCanHaveNoNamespaceWithFQNSetter() {
+    $this->phpClass->setFQN('stdClass');
+    $this->assertNull($this->phpClass->getNamespace());
+  }
+
+ public function testCanHaveNoNamespaceWithNamespaceSetter() {
+    $this->phpClass->setNamespace(NULL);
+    $this->assertNull($this->phpClass->getNamespace());
+    $this->assertEquals('PHPClassTest', $this->phpClass->getName());
+  }
+
+  public function testToStringContainsFQN() {
+    $this->assertContains(__CLASS__, (string) $this->phpClass);
+  }
+
+  public function testReflectionCanbeReplacedForTests() {
+    $this->phpClass->injectReflection($refl = $this->getMock('ReflectionClass', array(), array('Webforge\Common\ClassInterface')));
+    $this->assertSame($refl, $this->phpClass->getReflection());
   }
 }

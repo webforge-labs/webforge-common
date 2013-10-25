@@ -149,4 +149,18 @@ class ClassUtilTest extends \Webforge\Code\Test\Base {
   
     return $tests;
   }
+
+  public function testCreatesNewInstancesOfObjectsWithNewClassInstance() {
+    $refl = ClassUtil::newClassInstance('ReflectionClass', array(__CLASS__));
+    $this->assertEquals(__CLASS__, $refl->getName());
+
+
+    $refl = ClassUtil::newClassInstance(new \ReflectionClass('ReflectionClass'), array(__CLASS__));
+    $this->assertEquals(__CLASS__, $refl->getName());
+  }
+
+  public function testNewClassInstanceCanOnlyDoStringOrReflectionClass() {
+    $this->setExpectedException('InvalidArgumentException');
+    ClassUtil::newClassInstance(7, array());
+  }
 }

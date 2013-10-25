@@ -86,7 +86,7 @@ class PHPClass implements ClassInterface {
    */
   public function setNamespace($ns) {
     $this->reflection = NULL;
-    $this->namespace = ltrim(S::expand($ns, '\\', S::END), '\\');
+    $this->namespace = $ns != NULL ? ltrim(S::expand($ns, '\\', S::END), '\\') : NULL;
     return $this;
   }
 
