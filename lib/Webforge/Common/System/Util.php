@@ -11,24 +11,6 @@ class Util {
   const WINDOWS = 'windows';
   const UNIX = 'unix';
 
-  protected $executableFinder;
-
-  public function __construct(ExecutableFinder $executableFinder) {
-    $this->executableFinder = $executableFinder;
-  }
-
-  /**
-   * Finds a system configurable command
-   * 
-   * you can put into your host-config:
-   * 
-   * executables.$name = /full/path/to/command/with/$name
-   * @return File to the binary
-   */
-  public function findCommand($name) {
-    return $this->executableFinder->getExecutable($name);
-  }
-  
   /**
    * Returns if the real physical Engine where PHP runs is a Windows-System
    * @return bool
