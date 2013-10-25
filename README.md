@@ -1,5 +1,9 @@
 # webforge-common
 
+[![Build Status](https://travis-ci.org/webforge-labs/webforge-common.png)](https://travis-ci.org/webforge-labs/webforge-common)  
+[![Coverage Status](https://coveralls.io/repos/webforge-labs/webforge-common/badge.png?branch=master)](https://coveralls.io/r/webforge-labs/webforge-common?branch=master)  
+[![Latest Stable Version](https://poser.pugx.org/webforge/common/version.png)](https://packagist.org/packages/webforge/common)
+
 This small library covers all common code for the webforge framework, to have a small set from classes that are sufficient to start off a litte project.
 You can use it indepently from every webforge installation - allthough you will lose some features.
 
