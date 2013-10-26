@@ -76,6 +76,13 @@ interface ExecutionSystem {
   public function buildPHPProcess();
 
   /**
+   * Returns the file to a executable if findable
+   * 
+   * @return Webforge\Common\System\File
+   */
+  public function which($name);
+
+  /**
    * Will just call the command as if it were called directly
    * 
    * useful to delegate interaction and output, but not to interact with the command
@@ -86,4 +93,11 @@ interface ExecutionSystem {
    * @return self::WINDOWS or self::UNIX
    */
   public function getOperatingSystem();
+
+  /**
+   * Changes the working directory for all following commands
+   * @return System
+   */
+  public function setWorkingDirectory(Dir $dir);
+
 }
