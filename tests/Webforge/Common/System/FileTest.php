@@ -20,6 +20,7 @@ class FileTest extends \Webforge\Code\Test\Base {
 
     $this->dirPath = self::absPath('path','to','some','dir');
     $this->dir = new Dir($this->dirPath);
+    $this->notExistingFile = $this->dir->getFile('not-existing');
   }
   
   // erstellt einen Pfad mit trailing slash
@@ -141,6 +142,22 @@ class FileTest extends \Webforge\Code\Test\Base {
     $url = "/in2days/2011_newyork";
     $this->assertEquals('.'.DIRECTORY_SEPARATOR.'in2days'.DIRECTORY_SEPARATOR.'2011_newyork', (string) File::createFromURL($url));
   }
+
+  public function testWriteContentsCanDoAnExclusiveTempMove() {
+    $file = File::createTemporary();
+
+    $file->writeContents(123, File::EXCLUSIVE);
+    $this->assertEquals(123, file_get_contents((string) $file));
+    $file->delete();
+  }
+
+  public function testWritingIntoAFileWithoutAnExistingDirDoesFail() {
+    $this->assertFalse($this->dir->exists());
+
+    $this->setExpectedException('Webforge\Common\System\Exception');
+    
+    $this->dir->getFile('new.txt')->writeContents('some-content');
+  }
   
   public function testSha1Hashing() {
     $content = 'sldfjsldfj';
@@ -153,6 +170,7 @@ class FileTest extends \Webforge\Code\Test\Base {
     $file->writeContents($otherContent);
     //$this->assertNotEquals(sha1($content), $file->getSha1());
     $this->assertEquals(sha1($otherContent), $file->getSha1());
+    $file->delete();
   }
 
   protected function setupNoExtensionFile() {
@@ -224,6 +242,78 @@ class FileTest extends \Webforge\Code\Test\Base {
     $this->assertEquals(
       $dir->getOSPath(Dir::UNIX).'test.php',
       $file->getOSPath(File::UNIX)
+    );
+  }
+
+  public function testCopySourceHasToBeExisting() {
+    $this->setExpectedException(__NAMESPACE__.'\Exception');
+    $this->notExistingFile->copy($this->dir->getFile('new.txt'));
+  }
+
+  public function testCopyCanCopyIntoADirectoryAndUsesTheSameName() {
+    $dir = Dir::createTemporary();
+
+    $file = new File(__FILE__);
+    $file->copy($dir);
+
+    $this->assertFileExists((string) $dir->getFile(basename(__FILE__)));
+    $dir->delete();
+  }
+
+  public function testTheDestinationDirHasToBeExisting() {
+    $this->setExpectedException(__NAMESPACE__.'\Exception');
+
+    $file = new File(__FILE__);
+    $file->copy($this->dir);
+  }
+
+  public function testDestinationfromCopyCannotBeAstring() {
+    $this->setExpectedException('InvalidArgumentException');
+
+    $file = new File(__FILE__);
+    $file->copy('to-wrong');
+  }
+
+  public function testIsRelativeIsReflectedFromDirectory() {
+    $this->assertFalse($this->notExistingFile->isRelative());
+  }
+
+  public function testResolvePathIsCalledFromDirectory() {
+    $file = new File(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'file.txt');
+    $file->resolvePath();
+
+    $this->assertEquals(
+      realpath(__DIR__.DIRECTORY_SEPARATOR.'..').DIRECTORY_SEPARATOR.'file.txt',
+      (string) $file
+    );
+  }
+
+  public function testGetSizeReturnsTheFileSizeINBytes() {
+    $f = File::createTemporary()->writeContents(str_repeat('1', 16)); 
+    clearstatcache();
+    $this->assertEquals(16, $f->getSize());
+    $f->delete();
+  }
+
+  public function testFileGetContentsCannotReadNotExistingFile() {
+    $this->setExpectedException(__NAMESPACE__.'\Exception');
+    $this->notExistingFile->getContents();
+  }
+
+  public function testFileGetContentsCannotReadNotExistingFileWithSize() {
+    $this->setExpectedException(__NAMESPACE__.'\Exception');
+    $this->notExistingFile->getContents(2);
+  }
+
+  public function testGetContentsCanBeRestrictedToBytes() {
+    $f = File::createTemporary()->writeContents(str_repeat('1', 16)); 
+    $this->assertEquals(2, mb_strlen($f->getContents(2)));
+  }
+
+  public function testSafeNameIsNotCool() {
+    $this->assertEquals(
+      'yAElsdfjIO',
+      File::safename('ýÂÊlsdfjÎÔ')
     );
   }
 }

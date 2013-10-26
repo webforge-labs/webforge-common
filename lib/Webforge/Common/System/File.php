@@ -105,11 +105,7 @@ class File {
       /* kein Verzeichnis vorhanden, vll ein Notice? (aber eigentlich sollte dies ja auch okay sein */
     }
     
-    try {
-      $filename = self::extractFilename($file);
-    } catch (Exception $e) {
-      throw new Exception ('Fehler beim Erstellen einer Datei aus einem Pfad: '.$e->getMessage());
-    }
+    $filename = self::extractFilename($file);
 
     $this->constructDefault($filename,$dir);
   }
@@ -181,12 +177,9 @@ class File {
    * @return string
    */
   public function getContents($maxLength = NULL) {
-    if (!$this->exists() || !$this->isReadable()) {
-      throw new Exception('Datei nicht lesbar: '.$this);
-    }
 
     if (isset($maxLength)) {
-      $ret = file_get_contents(
+      $ret = @file_get_contents(
         (string) $this,
         NULL, // flags
         NULL, // context
@@ -194,12 +187,19 @@ class File {
         $maxLength
       );
     } else {
-      $ret = file_get_contents((string) $this);
+      $ret = @file_get_contents((string) $this);
     }
 
     if ($ret === FALSE) {
+      $reason = '';
+      if (!$this->exists()) {
+        $reason = '. The file does not exist';
+      } elseif(!$this->isReadable()) {
+        $reason = '. The file is not readable';
+      }
+
       throw new Exception(
-        sprintf("dateiinhalt von '%s' konnte nicht ausgelesen werden PHP::file_get_contents gab FALSE zurück", $this)
+        sprintf("dateiinhalt von '%s' konnte nicht ausgelesen werden PHP::file_get_contents gab FALSE zurück%s", $this, $reason)
       );
     }
 
@@ -527,11 +527,12 @@ class File {
    */
   public static function extractFilename($string) {
     if (mb_strlen($string) == 0) 
-      throw new Exception('String ist leer');
+      throw new Exception('Cannot extract filename from empty string');
     
     $file = basename($string);
+
     if (mb_strlen($file) == 0) 
-      throw new Exception('es konnte kein Dateiname extrahiert werden ');
+      throw new Exception('PHP could not extract the basename of the file: '.$file);
     
     return $file;
   }
