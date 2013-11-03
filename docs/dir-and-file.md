@@ -1,6 +1,6 @@
 # Dir and File
 
-Dir and File help you to do very common, often typed actions with php file utils
+Dir and File help you to do very common, often typed actions with php file utils. Notice: every directory has a trailing slash or backslash at its end per default. You have to construct those paths with trailing slash as well, unless you use `Dir::factoryTS`
 
 ## usage
 ```php
@@ -23,4 +23,16 @@ $file->copy(Dir::factoryTS(__DIR__));
 $file->getCreationTime();
 $file->getModificationTime()->format('d.m.Y H:i');
 $file->getAccessTime()->1i8n_format('d. F H:i');
+```
+
+In most of the cases you will work with libraries and other devs that do not trailslash their directoriese
+
+will return the path as string [w]ithout [t]railing [s]lash:
+```php
+$dir->wtsPath();
+```
+
+will return the path as string with trailing slash:
+```php
+$dir->getPath();
 ```
