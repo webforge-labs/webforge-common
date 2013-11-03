@@ -20,6 +20,7 @@ class Dir {
   const UNIX = 'UNIX';
   
   const WITHOUT_TRAILINGSLASH = 0x000001;
+  const WITHOUT_TRAILING_SLASH = 0x000001;
 
   /**
    * Represents path like D:\ converted to unix as D:/
