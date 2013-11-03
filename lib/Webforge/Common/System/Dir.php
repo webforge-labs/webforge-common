@@ -1020,6 +1020,13 @@ class Dir {
   }
 
   /**
+   * Returns the path without trailing slash
+   */
+  public function wtsPath() {
+    return $this->getPath(self::WITHOUT_TRAILINGSLASH);
+  }
+
+  /**
    * Returns the path of the directory converted to specific OS
    * 
    * some edge cases will throw an LogicException because they cannot be converted:

@@ -351,5 +351,9 @@ class DirTest extends PHPUnit_Framework_TestCase {
       (string) Dir::createFromURL('in/cwd/')
     );
   }
+
+  public function testWtsPath() {
+    $this->assertEquals(__DIR__, $this->dir->wtsPath());
+  }
 }
  
