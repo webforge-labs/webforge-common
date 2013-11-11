@@ -110,6 +110,13 @@ class PHPClass implements ClassInterface {
   }
 
   /**
+   * @return bool
+   */
+  public function equals(ClassInterface $otherClass) {
+    return $this->getFQN() === $otherClass->getFQN();
+  }
+
+  /**
    * @return string
    */
   public function __toString() {

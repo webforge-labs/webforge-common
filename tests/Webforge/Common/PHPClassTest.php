@@ -57,4 +57,9 @@ class PHPClassTest extends \Webforge\Code\Test\Base {
     $this->phpClass->injectReflection($refl = $this->getMock('ReflectionClass', array(), array('Webforge\Common\ClassInterface')));
     $this->assertSame($refl, $this->phpClass->getReflection());
   }
+
+  public function testEquals() {
+    $this->assertTrue($this->phpClass->equals(new PHPClass(__CLASS__)));
+    $this->assertFalse($this->phpClass->equals(new PHPClass(__CLASS__.'Nope')));
+  }
 }

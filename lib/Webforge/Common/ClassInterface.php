@@ -23,4 +23,9 @@ interface ClassInterface {
    * @return ReflectionClass
    */
   public function getReflection();
+
+  /**
+   * @return bool
+   */
+  public function equals(ClassInterface $other);
 }
