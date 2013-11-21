@@ -8,6 +8,9 @@ class ExecutableFinder {
 
   private $finder;
 
+  /**
+   * @param Array $executables keys are the name of the command and the values are the full path to the binary (or the command)
+   */
   public function __construct(Array $executables, SymfonyExecutableFinder $finder = NULL) {
     $this->executables = $executables;
     $this->finder = $finder ?: new SymfonyExecutableFinder();

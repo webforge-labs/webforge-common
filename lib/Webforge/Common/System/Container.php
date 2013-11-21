@@ -20,6 +20,14 @@ class Container {
   public function __construct(ContainerConfiguration $configuration) {
     $this->configuration = $configuration;
   }
+
+  /**
+   * @return Webforge\Common\System\Container
+   */
+  public static function createDefault() {
+    return new static(new DefaultContainerConfiguration());
+  }
+
   /**
    * @return Webforge\Common\System\System
    */

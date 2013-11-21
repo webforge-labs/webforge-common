@@ -17,6 +17,7 @@ class ContainerTest extends \Webforge\Code\Test\Base {
     $this->systemInterface = __NAMESPACE__.'\System';
   }
 
+
   public function testContainerReturnsASystemImplementation() {
     $this->assertInstanceOf($this->systemInterface, $this->container->getSystem());
   }
@@ -37,6 +38,13 @@ class ContainerTest extends \Webforge\Code\Test\Base {
       (string) $this->someBin, 
       (string) $finder->getExecutable('test-bin')
     );
+  }
+
+  public function testStaticCreatorCreatesADefaultConfigurationContainer() {
+    $this->assertInstanceOf($this->chainClass, $defaultContainer = Container::createDefault());
+
+    $this->assertInstanceOf(__NAMESPACE__.'\ExecutableFinder', $defaultContainer->getExecutableFinder());
+    $this->assertInstanceOf($this->systemInterface, $defaultContainer->getSystem());
   }
 
   protected function expectExecutableConfiguration() {
