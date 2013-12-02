@@ -346,4 +346,24 @@ class ArrayUtil {
 
     return $filtered;
   }
+
+  /**
+   * Returns an array with the index constructred from objects in the collection
+   * 
+   * @param mixed $property see pluck() for details
+   * @return array
+   */
+  public static function indexBy(Array $array, $property) {
+    $ret = array();
+
+    if (count($array) > 0) {
+      $index = Util::castGetterFromSample($property, current($array));
+
+      foreach ($array as $item) {
+        $ret[$index($item)] = $item;
+      }
+    }
+
+    return $ret;
+  }
 }

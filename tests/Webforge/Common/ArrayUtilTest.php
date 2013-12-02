@@ -349,6 +349,13 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
       'name',
       array('moe','larry','curly')
     );
+
+    // special case where the sample object tester is NULL
+    $tests[] = array(
+      json_decode('[{"name": NULL, "age": 40}, {"name": "larry", "age": 50}, {"name": "curly", "age": 60}]'),
+      'name',
+      array(NULL,'larry','curly')
+    );
     
     $tests[] = array(
       array(),
@@ -377,6 +384,39 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
       ),
       A::filterKeys($headers, $filter),
       'A::filterKeys does not filter'
+    );
+  }
+
+  public function testIndexByWithObjectProperty() {
+    $array = json_decode('[
+  { "dir": "left", "code": 97 },
+  { "dir": "right", "code": 100 }
+]');
+
+    $this->assertEquals(
+      (array) json_decode('{ "left": { "dir": "left", "code": 97 }, "right": { "dir": "right", "code": 100 } }'),
+      A::indexBy($array, 'dir')
+    );
+  }
+
+  public function testReindexWithClosure() {
+    $array = json_decode('[
+  { "dir": "left", "code": 97 },
+  { "dir": "right", "code": 100 }
+]');
+
+    $this->assertEquals(
+      (array) json_decode('{ "left": { "dir": "left", "code": 97 }, "right": { "dir": "right", "code": 100 } }'),
+      A::indexBy($array, function($item) {
+        return $item->dir;
+      })
+    );
+  }
+
+  public function testIndexByWithEmptyArray() {
+    $this->assertEquals(
+      array(),
+      A::indexBy(array(), 'index')
     );
   }
 }

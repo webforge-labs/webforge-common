@@ -6,6 +6,7 @@ use Webforge\Common\ArrayUtil as A;
 use Doctrine\Common\Collections\Collection;
 use Traversable;
 use IteratorAggregate;
+use Closure;
 
 class Util {
   
@@ -108,7 +109,7 @@ class Util {
   public static function castGetterFromSample($getter, $sampleObject) {
     if (!($getter instanceof Closure)) {
       if (mb_strpos($getter, 'get') !== 0) {
-        if (isset($sampleObject->$getter)) {
+        if (property_exists($sampleObject, $getter)) {
           $prop = $getter;
           $getter = function($o) use ($prop) {
             return $o->$prop;
