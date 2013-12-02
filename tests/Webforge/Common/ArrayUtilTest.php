@@ -352,7 +352,7 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
 
     // special case where the sample object tester is NULL
     $tests[] = array(
-      json_decode('[{"name": NULL, "age": 40}, {"name": "larry", "age": 50}, {"name": "curly", "age": 60}]'),
+      json_decode('[{"name": null, "age": 40}, {"name": "larry", "age": 50}, {"name": "curly", "age": 60}]'),
       'name',
       array(NULL,'larry','curly')
     );
