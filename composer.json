@@ -18,12 +18,11 @@
     "seld/jsonlint": "1.1.*@stable"
   },
   "require-dev": {
-    "webforge/testplate": ">=1.3",
+    "webforge/testplate": ">=1.5",
     "mikey179/vfsStream": "1.2.*@stable",
     "mockery/mockery": "@stable",
     "liip/rmt": "0.9.*",
-    "satooshi/php-coveralls": "dev-master",
-    "apigen/apigen": "dev-master"
+    "satooshi/php-coveralls": "dev-master"
   },
   "autoload": {
     "psr-0": {"Webforge\\Common": ["lib/", "tests/"]}

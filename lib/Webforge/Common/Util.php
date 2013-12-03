@@ -108,8 +108,8 @@ class Util {
    */
   public static function castGetterFromSample($getter, $sampleObject) {
     if (!($getter instanceof Closure)) {
-      if (mb_strpos($getter, 'get') !== 0) {
-        if (property_exists($sampleObject, $getter)) {
+      if (mb_strpos($getter, 'get') !== 0) {        
+        if (ClassUtil::hasPublicProperty($sampleObject, $getter)) {
           $prop = $getter;
           $getter = function($o) use ($prop) {
             return $o->$prop;

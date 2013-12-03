@@ -4,6 +4,7 @@ namespace Psc;
 
 use PHPUnit_Framework_TestCase;
 use Webforge\Common\ArrayUtil AS A;
+use Webforge\Common\PHPClass;
 
 class ArrayUtilTest extends PHPUnit_Framework_TestCase {
   
@@ -355,6 +356,12 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
       json_decode('[{"name": null, "age": 40}, {"name": "larry", "age": 50}, {"name": "curly", "age": 60}]'),
       'name',
       array(NULL,'larry','curly')
+    );
+
+    $tests[] = array(
+      array(new PHPClass('Namespaced\one'), new PHPClass('Namespaced\two')),
+      'name',
+      array('one', 'two')
     );
     
     $tests[] = array(

@@ -65,4 +65,13 @@ class ClassUtil {
     
     return $refl->newInstanceArgs($constructorArgs);
   }
+
+  /**
+   * Returns if the $object instance has the $property as public property
+   * 
+   * @return bool
+   */
+  public static function hasPublicProperty($object, $property) {
+    return array_key_exists($property, (array) $object);
+  }
 }
