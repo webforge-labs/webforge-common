@@ -36,3 +36,7 @@ will return the path as string with trailing slash:
 ```php
 $dir->getPath();
 ```
+
+## umask and defaultMod
+
+For historical reasons the default permissions for a new Directory created by Webforge are 0644 (octal). To make webforge respekt your umask, configure it and set the environment variable `WEBFORGE_UMASK_SET` to 1. It then will call mkdir() with 0777 (octal) so that your umask is respected.
