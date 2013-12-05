@@ -883,7 +883,7 @@ class Dir {
     }
       
     if (!$this->exists()) {
-      $ret = @mkdir((string) $this, self::$defaultMod, $parent);
+      $ret = @mkdir((string) $this, $this->getDefaultMod(), $parent);
       if ($ret == FALSE) {
         throw new Exception('Fehler beim erstellen des Verzeichnisses: '.$this);
       }
@@ -896,6 +896,18 @@ class Dir {
     return $this;
   }
 
+  /**
+   * Returns the correct default for mkdir() operations (and such) that respect a umask (if set)
+   * 
+   * if env WEBFORGE_UMASK_SET is 1 then always 0777 is used, otherwise the content from self::$defaultMod is used
+   */
+  public function getDefaultMod() {
+    if (getenv('WEBFORGE_UMASK_SET') == 1) {
+      return 0777;
+    } else {
+      return self::$defaultMod;
+    }
+  }
 
   /**
    * Copy all files (just the files) from this dir into another

@@ -355,5 +355,43 @@ class DirTest extends PHPUnit_Framework_TestCase {
   public function testWtsPath() {
     $this->assertEquals(__DIR__, $this->dir->wtsPath());
   }
+
+  public function testCreateDirRespectsEnvVariableWhenUmaskIsSet() {
+    $old = getenv('WEBFORGE_UMASK_SET');
+    if ($old != 1) {
+      putenv('WEBFORGE_UMASK_SET=1');
+    }
+
+    $this->assertEquals(
+      sprintf('%04o', 0744),
+      sprintf('%04o', Dir::$defaultMod),
+      'defaultMod for historical reasons should be used for this test (otherwise its useless)'
+    );
+
+    try {
+      $newDir = new Dir(__DIR__.DIRECTORY_SEPARATOR.'create-test'.DIRECTORY_SEPARATOR);
+
+      if ($newDir->exists()) {
+        $newDir->delete();
+      }
+
+      $newDir->create();
+
+      $perms = fileperms($newDir) & 0777;
+      $umask = umask();
+
+      $this->assertEquals(
+        sprintf('%04o', 0777 & ~$umask),
+        sprintf('%04o', $perms),
+        'Permission for dir should be umasked. (it should have used 0777 for creating)'
+      );
+
+    } catch (\Exception $e) {
+      putenv('WEBFORGE_UMASK_SET='.$old);
+      throw $e;
+    }
+
+    putenv('WEBFORGE_UMASK_SET='.$old);
+  }
 }
  
