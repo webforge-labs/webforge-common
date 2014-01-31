@@ -177,6 +177,13 @@ class Url {
     $this->hostParts = $parts;
     return $this;
   }
+
+  /**
+   * Adds an host part onto the beginning
+   */
+  public function addSubDomain($domain) {
+    array_unshift($this->hostParts,$domain);
+  }
     
   /**
    * @return array
@@ -195,7 +202,7 @@ class Url {
     $this->path[] = $string;
     return $this;
   }
-  
+
   /**
    * Modifies the current URL with adding an relative Url to the pathParts
    *

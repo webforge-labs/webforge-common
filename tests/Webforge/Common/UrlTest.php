@@ -197,6 +197,15 @@ class UrlTest extends \Webforge\Code\Test\Base {
     new Url('myproject.dev1.domain');
   }
 
+  public function testAddSubdomain() {
+    $url = new Url('http://tvstt.laptop.ps-webforge.net/');
+    $url->addSubDomain('test');
+
+    $this->assertEquals(
+      'http://test.tvstt.laptop.ps-webforge.net/',
+      (string) $url
+    );
+  }
 
   public function testPathTrailingSlashCanBeSet() {
     $url = new Url($s = 'https://www.google.com/analytics');
