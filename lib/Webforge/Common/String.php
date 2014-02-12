@@ -294,4 +294,40 @@ class String {
     );
     return $string;
   }
+
+  /**
+   * @return string
+   */
+  public static function dashToCamelCase($string) {
+    return ucfirst(Preg::replace_callback($string, '/\-([a-zA-Z])/', function ($match) {
+      return mb_strtoupper($match[1]);
+    }));
+  }
+
+  /**
+   * @return string
+   */
+  public static function camelCaseToDash($camelName) {
+    if (Preg::match($camelName, '/^[A-Z0-9]+$/')) {
+      return mb_strtolower($camelName);
+    }
+    
+    $specials = preg_quote(implode("", array('.','@','\\',' ','[',']','(',')')), '/');
+    
+    $dashed = Preg::replace(
+      // in
+      $camelName,
+      // what
+      sprintf('/%s|[%s]/',
+        "(?<=\w)([A-Z]|[0-9])",
+        $specials
+      ),
+      // with
+      '-\\1'
+    );
+
+    $dashed = mb_strtolower($dashed);
+    
+    return $dashed;
+  }
 }

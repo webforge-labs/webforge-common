@@ -342,4 +342,54 @@ JAVASCRIPT;
   
     return $tests;
   }
+
+
+  /**
+   * @dataProvider provideCamelCaseToDash
+   */
+  public function testCamelCaseToDash($camelName, $dashName) {
+    $this->assertEquals(
+      $dashName,
+      S::camelCaseToDash($camelName)
+    );
+  }
+
+  /**
+   * @dataProvider provideDashToCamelCase
+   */
+  public function testDashToCamelCase($camelName, $dashName) {
+    $this->assertEquals(
+      $camelName,
+      S::dashToCamelCase($dashName)
+    );
+  }
+  
+  public static function provideCamelCaseToDash() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $test('RegisterPackage', 'register-package');
+    $test('RegisterOtherPackage', 'register-other-package');
+    $test('API', 'api');
+
+    return $tests;
+  }
+
+  public static function provideDashToCamelCase() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $test('RegisterPackage', 'register-package');
+    $test('RegisterOtherPackage', 'register-other-package');
+    $test('Api', 'api'); // this is not bidirectional to the last testcase of the provider above
+
+    return $tests;
+  }
+
 }
