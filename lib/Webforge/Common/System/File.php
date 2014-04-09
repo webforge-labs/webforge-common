@@ -70,16 +70,22 @@ class File {
   /**
    * Creates a temporary File in the system temp directory
    * 
-   * @return Psc\System\File
+   * @return Webforge\Common\System\File
    */
-  public static function createTemporary() {
-    return new static(tempnam(sys_get_temp_dir(), mb_substr(uniqid(),0,3)));
+  public static function createTemporary($extension = NULL) {
+    $tmpfile = tempnam(sys_get_temp_dir(), mb_substr(uniqid(),0,3));
+
+    if ($extension) {
+      rename($tmpfile, $tmpfile = $tmpfile.'.'.ltrim($extension, '.'));
+    }
+
+    return new static($tmpfile);
   }
   
   /**
    * Creates the file from a relative URL in relation to $base
    * 
-   * @return Psc\System\File
+   * @return Webforge\Common\System\File
    */
   public static function createFromURL($url, Dir $base = NULL) {
     if (!isset($base)) $base = new Dir('.'.DIRECTORY_SEPARATOR);

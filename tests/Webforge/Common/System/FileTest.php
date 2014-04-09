@@ -151,6 +151,14 @@ class FileTest extends \Webforge\Code\Test\Base {
     $file->delete();
   }
 
+  public function testCreatingTemporaryWithExtension() {
+    $file = File::createTemporary('jpg');
+
+    $this->assertEquals('jpg', $file->getExtension());
+
+    $file->delete();
+  }
+
   public function testWritingIntoAFileWithoutAnExistingDirDoesFail() {
     $this->assertFalse($this->dir->exists());
 
