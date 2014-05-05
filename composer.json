@@ -13,7 +13,7 @@
     "ext-mbstring": "*",
     
     "webforge/collections": "1.0.*@stable",
-    "webforge/process": "1.1.*@dev",
+    "webforge/process": "1.2.*@dev",
 
     "seld/jsonlint": "1.1.*@stable"
   },
@@ -30,7 +30,7 @@
   "minimum-stability": "dev",
   "extra": {
     "branch-alias": {
-      "dev-master": "1.7.x-dev"
+      "dev-master": "1.8.x-dev"
     }
   }
 }
