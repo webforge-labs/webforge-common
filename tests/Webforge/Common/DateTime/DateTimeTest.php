@@ -131,7 +131,17 @@ class DateTimeTest extends \Webforge\Common\TestCase {
     $date = DateTime::now();
     $date->setYear('2011');
   }
-  
+
+  public function testCopyReturnsAClonedAndRelativelyModifiedDate() {
+    $date = new DateTime('07.08.2014');
+    $copy = $date->copy();
+    $this->assertEquals('07.08.2014', $copy->format('d.m.Y'));
+
+    $otherDate = $date->copy('+1 day');
+    $this->assertEquals('08.08.2014', $otherDate->format('d.m.Y'));
+
+    $this->assertEquals('07.08.2014', $date->format('d.m.Y'));
+  }
   
   public function provideFormatSpan() {
     return Array(
@@ -212,6 +222,78 @@ class DateTimeTest extends \Webforge\Common\TestCase {
       array(DateTime::SAT, new DateTime('21.03.2011'), '26.03.2011'),
       array(DateTime::SUN, new DateTime('21.03.2011'), '27.03.2011'),
     );
+  }
+
+  /**
+   * @dataProvider provideBefore
+   */
+  public function testBefore($expected, $subjectDate, $objectDate) {
+    $subject = new DateTime($subjectDate);
+    $object = new DateTime($objectDate);
+
+    $this->assertEquals($expected, $subject->isBefore($object), 'failed asserting that: '.$subjectDate.'->isBefore('.$objectDate.')');
+  }
+  
+  public static function provideBefore() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $test(TRUE, '20.03.2014', '21.03.2014');
+    $test(FALSE, '21.03.2014', '21.03.2014');
+    $test(FALSE, '22.03.2014', '21.03.2014');
+  
+    return $tests;
+  }
+
+  /**
+   * @dataProvider provideAfter
+   */
+  public function testAfter($expected, $subjectDate, $objectDate) {
+    $subject = new DateTime($subjectDate);
+    $object = new DateTime($objectDate);
+
+    $this->assertEquals($expected, $subject->isAfter($object), 'failed asserting that: '.$subjectDate.'->isAfter('.$objectDate.')');
+  }
+  
+  public static function provideAfter() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $test(FALSE, '20.03.2014', '21.03.2014');
+    $test(FALSE, '21.03.2014', '21.03.2014');
+    $test(TRUE, '22.03.2014', '21.03.2014');
+  
+    return $tests;
+  }
+
+  /**
+   * @dataProvider provideEqual
+   */
+  public function testEqual($expected, $subjectDate, $objectDate) {
+    $subject = new DateTime($subjectDate);
+    $object = new DateTime($objectDate);
+
+    $this->assertEquals($expected, $subject->isEqual($object), 'failed asserting that: '.$subjectDate.'->isEqual('.$objectDate.')');
+  }
+  
+  public static function provideEqual() {
+    $tests = array();
+  
+    $test = function() use (&$tests) {
+      $tests[] = func_get_args();
+    };
+  
+    $test(FALSE, '20.03.2014', '21.03.2014');
+    $test(TRUE, '21.03.2014', '21.03.2014');
+    $test(FALSE, '22.03.2014', '21.03.2014');
+  
+    return $tests;
   }
 }
 ?>

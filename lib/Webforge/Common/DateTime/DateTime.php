@@ -108,6 +108,18 @@ class DateTime extends \DateTime {
     
     return $this->format('d.m.Y') === $now->format('d.m.Y');
   }
+
+  public function isBefore(DateTime $other) {
+    return $this->getTimestamp() < $other->getTimestamp();
+  }
+
+  public function isAfter(DateTime $other) {
+    return $this->getTimestamp() > $other->getTimestamp();
+  }
+
+  public function isEqual(DateTime $other) {
+    return $this->getTimestamp() == $other->getTimestamp();
+  }
   
   /**
    * Gibt Zurück ob der angegebene Timestamp in der Woche des aktuellen Timestamps (now) ist
@@ -128,7 +140,19 @@ class DateTime extends \DateTime {
   public function diff($object, $absolute = NULL) {
     return DateInterval::createFromDateInterval(parent::diff($object, $absolute));
   }
-  
+
+  /**
+   * @return DateTime
+   */
+  public function copy($relativeDateIntervalString = NULL) {
+    $date = clone $this;
+
+    if ($relativeDateIntervalString) {
+      $date->add(DateInterval::createFromDateString($relativeDateIntervalString));
+    }
+
+    return $date;
+  }
   
   /**
    * Parsed einen String und gibt ein DateTime Objekt zurück
