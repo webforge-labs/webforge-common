@@ -87,10 +87,9 @@ class JSONConverterTest extends \Webforge\Common\TestCase {
   }
   
   public function testWrongJSONTHrowsAJSONParsingException() {
-    $this->setExpectedException('Webforge\Common\JS\JSONParsingException');
+    $this->setExpectedException('Webforge\Common\JS\JSONParsingException', 'Parse error on line 13:');
 
-    try {
-      $this->converter->parse(<<<'JSON'
+    $this->converter->parse(<<<'JSON'
 {
   "name": "webforge/common",
   "type": "library",
@@ -108,10 +107,14 @@ class JSONConverterTest extends \Webforge\Common\TestCase {
 }
 JSON
       );
-    } catch (JSONParsingException $e) {
-      $this->assertContains('Parse error on line 13:', $e->getMessage());
-      throw $e;
-    }
+  }
+
+  public function testThrowsExceptionForNotRightlyEncodedValues() {
+    $this->setExpectedException('Webforge\Common\JS\JSONParsingException', 'unknown JSON error: 5 while parsing string:');
+
+    $this->converter->parse(
+      base64_decode('eyJ1c2VybmFtZSI6Im1heG11c3Rlcm1hbm4iLCJkZXNjcmlwdGlvbiI6IldpbGxrb21tZW5zcHLkbWllIn0=')
+    );
   }
 
   public function testParseThrowsExceptionWhenEmptyAsserted() {
@@ -142,4 +145,3 @@ JSON
     );    
   }
 }
-?>

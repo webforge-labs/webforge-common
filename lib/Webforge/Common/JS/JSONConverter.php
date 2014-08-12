@@ -50,16 +50,24 @@ class JSONConverter {
 
       $error = json_last_error();
 
-      if ($error === JSON_ERROR_SYNTAX || $error === JSON_ERROR_CTRL_CHAR) {
+      if ($error !== JSON_ERROR_DEPTH && $error !== JSON_ERROR_NONE) {
         $parser = new JsonParser();
         $parsingException = $parser->lint($json);
 
-        throw new JSONParsingException(
-          sprintf("JSONConverter: %s", $parsingException->getMessage())
-        );
+        if ($parsingException instanceof \Seld\JsonLint\ParsingException) {
+          throw new JSONParsingException(
+            sprintf("JSONConverter: %s", $parsingException->getMessage())
+          );
+        } else {
+          throw new JSONParsingException(
+            sprintf("unknown JSON error: %d while parsing string:\n%s", $error, $json)
+          );
+        }
         
+      } elseif (array_key_exists($error, $this->errors)) {
+        throw new JSONParsingException(sprintf('JSON error: %s while parsing', $this->errors[$error]));
       } else {
-        throw new JSONParsingException(sprintf('JSON error parsing string: '.$this->errors[$error]));
+        throw new JSONParsingException(sprintf('JSON error: %d while parsing', $error));
       }
     }
     
