@@ -99,9 +99,12 @@ class CodeWriterTest extends \Webforge\Code\Test\Base {
         );
 
     // floats
+    // http://php.net/manual/de/function.var-export.php#113770
+    /*
     $tel("array(0.12,array('eins','zwei'),3)",
          array(0.12, array('eins','zwei'), 3)
         );
+    */
 
     // stdClass ist erlaubt (alles andere nicht)
     $tel("array((object) array('objProp'=>'eins'))",
