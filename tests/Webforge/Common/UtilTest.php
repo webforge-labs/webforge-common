@@ -6,7 +6,7 @@ use stdClass;
 use ArrayIterator;
 use Webforge\Collections\TraversableCollection;
 
-class UtilTest extends TestCase {
+class UtilTest extends \PHPUnit_Framework_TestCase {
   
   public function testTraversablePreCondition() {
     $this->assertInstanceOf('Traversable', new ArrayIterator(array(1,2,3)));

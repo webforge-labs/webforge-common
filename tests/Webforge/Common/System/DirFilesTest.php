@@ -2,13 +2,12 @@
 
 namespace Webforge\Common\System;
 
-use PHPUnit_Framework_TestCase;
 use SplFileInfo;
 
 /**
  * @covers Webforge\Common\System\Dir
  */
-class DirFilesTest extends PHPUnit_Framework_TestCase {
+class DirFilesTest extends \PHPUnit_Framework_TestCase {
   
   protected $dir;
   protected $absolutePath, $relativePath;

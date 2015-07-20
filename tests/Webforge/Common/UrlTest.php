@@ -2,7 +2,7 @@
 
 namespace Webforge\Common;
 
-class UrlTest extends \Webforge\Code\Test\Base {
+class UrlTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider provideTestAPI

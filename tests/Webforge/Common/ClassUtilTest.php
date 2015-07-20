@@ -2,13 +2,8 @@
 
 namespace Webforge\Common;
 
-class ClassUtilTest extends \Webforge\Code\Test\Base {
+class ClassUtilTest extends \PHPUnit_Framework_TestCase {
   
-  public function setUp() {
-    $this->chainClass = 'Webforge\\Common\\ClassUtil';
-    parent::setUp();
-  }
-
   /**
    * @dataProvider provideGetNamespace
    */

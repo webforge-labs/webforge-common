@@ -2,9 +2,7 @@
 
 namespace Webforge\Common;
 
-use PHPUnit_Framework_TestCase;
-
-class PregTest extends PHPUnit_Framework_TestCase {
+class PregTest extends \PHPUnit_Framework_TestCase {
   
   protected $matchers;
   

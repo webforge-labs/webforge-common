@@ -2,7 +2,7 @@
 
 namespace Webforge\Common;
 
-class DeprecatedExceptionTest extends \Webforge\Code\Test\Base {
+class DeprecatedExceptionTest extends  \PHPUnit_Framework_TestCase {
 
   public function testDeprecationConstructionrFromMethod() {
     $this->assertInstanceOf(__NAMESPACE__.'\DeprecatedException', $e = DeprecatedException::fromMethod(__METHOD__));

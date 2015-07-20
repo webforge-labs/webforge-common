@@ -4,7 +4,7 @@ namespace Webforge\Common\System;
 
 use Mockery as m;
 
-class ContainerTest extends \Webforge\Code\Test\Base {
+class ContainerTest extends \Webforge\Common\TestCase {
   
   public function setUp() {
     $this->chainClass = 'Webforge\\Common\\System\\Container';

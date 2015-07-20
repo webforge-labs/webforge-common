@@ -6,15 +6,7 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 use Webforge\Common\JS\JSONConverter;
 
-class UtilTest extends \Webforge\Code\Test\Base {
-  
-  public function setUp() {
-    $this->chainClass = 'Webforge\\Common\\System\\Util';
-    parent::setUp();
-
-    $this->echoBat = $this->getPackageDir('bin/')->getFile('echo.bat');
-    $this->echoSh = $this->getPackageDir('bin/')->getFile('echo.sh');
-  }
+class UtilTest extends \PHPUnit_Framework_TestCase {
   
   public function testFindPHPBinaryReturnsAFileThatIsCallableLikeAPHPInterpreter() {
     $this->assertInstanceOf('Webforge\Common\System\File', $phpBin = Util::findPHPBinary());

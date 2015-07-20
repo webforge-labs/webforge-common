@@ -3,8 +3,9 @@
 namespace Webforge\Common\System;
 
 use org\bovigo\vfs\vfsStream;
+use Webforge\Common\TestCase;
 
-class FileTest extends \Webforge\Code\Test\Base {
+class FileTest extends TestCase {
   
   protected static $absPathPrefix;
   
@@ -201,7 +202,7 @@ class FileTest extends \Webforge\Code\Test\Base {
 
     $extensionFile = $noExtensionFile->findExtension($extensions);
 
-    $this->assertChainable($extensionFile);
+    $this->assertInstanceOf(__NAMESPACE__.'\\File', $extensionFile);
     $this->assertNotSame($extensionFile, $noExtensionFile);
 
     $this->assertEquals(

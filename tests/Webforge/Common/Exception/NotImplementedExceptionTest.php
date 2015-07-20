@@ -2,15 +2,10 @@
 
 namespace Webforge\Common\Exception;
 
-class NotImplementedExceptionTest extends \Webforge\Code\Test\Base {
+class NotImplementedExceptionTest extends \PHPUnit_Framework_TestCase {
   
-  public function setUp() {
-    $this->chainClass = __NAMESPACE__ . '\\NotImplementedException';
-    parent::setUp();
-  }
-
   public function testFromStringConstruct() {
-    $this->setExpectedException($this->chainClass);
+    $this->setExpectedException(__NAMESPACE__ . '\\NotImplementedException');
     throw NotImplementedException::fromString('parameter #2');
   }
 }

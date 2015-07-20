@@ -2,10 +2,9 @@
 
 namespace Webforge\Common;
 
-class PHPClassTest extends \Webforge\Code\Test\Base {
+class PHPClassTest extends \PHPUnit_Framework_TestCase {
   
   public function setUp() {
-    $this->chainClass = __NAMESPACE__ . '\\PHPClass';
     parent::setUp();
 
     $this->phpClass = new PHPClass(__CLASS__);

@@ -5,10 +5,9 @@ namespace Webforge\Common\JS;
 use org\bovigo\vfs\vfsStream;
 use Webforge\Common\System\File;
 
-class JSONFileTest extends \Webforge\Code\Test\Base {
+class JSONFileTest extends \Webforge\Common\TestCase {
   
   public function setUp() {
-    $this->chainClass = 'Webforge\\Common\\JS\\JSONFile';
     parent::setUp();
 
     vfsStream::setup('json-dir');

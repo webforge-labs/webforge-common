@@ -3,9 +3,8 @@
 namespace Webforge\Common;
 
 use Webforge\Common\String AS S;
-use PHPUnit_Framework_TestCase;
 
-class StringTest extends PHPUnit_Framework_TestCase {
+class StringTest extends \PHPUnit_Framework_TestCase {
   
   public function testStartsWithChecksIfStringStartsWithPrefix() {
     $string = 'EnvironmentEncoding';

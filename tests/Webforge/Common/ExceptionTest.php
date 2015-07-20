@@ -2,9 +2,7 @@
 
 namespace Webforge\Common;
 
-use PHPUnit_Framework_TestCase;
-
-class ExceptionTest extends PHPUnit_Framework_TestCase {
+class ExceptionTest extends \PHPUnit_Framework_TestCase {
   
   public function setUp() {
     $this->e = new Exception('this is the #1 exception', 0);

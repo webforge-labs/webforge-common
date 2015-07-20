@@ -2,12 +2,11 @@
 
 namespace Webforge\Common;
 
-class CodeWriterTest extends \Webforge\Code\Test\Base {
+class CodeWriterTest extends \PHPUnit_Framework_TestCase {
 
   protected $codeWriter;
   
   public function setUp() {
-    $this->chainClass = __NAMESPACE__ . '\\CodeWriter';
     parent::setUp();
 
     $this->codeWriter = new CodeWriter();

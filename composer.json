@@ -11,13 +11,13 @@
   "require": {
     "php": ">=5.3.2",
     "ext-mbstring": "*",
-    
-    "webforge/collections": "1.0.*@stable",
 
+    "webforge/utils": "1.0.*@dev",
+    "webforge/collections": "1.0.*@stable",
+    "webforge/process": "1.2.*@dev",
     "seld/jsonlint": "1.1.*@stable"
   },
   "require-dev": {
-    "webforge/testplate": ">=1.5",
     "mikey179/vfsStream": "1.2.*@stable",
     "mockery/mockery": "@stable",
     "liip/rmt": "0.9.*",
@@ -29,7 +29,7 @@
   "minimum-stability": "dev",
   "extra": {
     "branch-alias": {
-      "dev-master": "1.9.x-dev"
+      "dev-master": "1.8.x-dev"
     }
   }
 }

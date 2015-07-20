@@ -4,7 +4,7 @@ namespace Webforge\Common\System;
 
 use org\bovigo\vfs\vfsStream;
 
-class FileAttributesTest extends \Webforge\Code\Test\Base {
+class FileAttributesTest extends \PHPUnit_Framework_TestCase {
   
   public function setUp() {
     parent::setUp();

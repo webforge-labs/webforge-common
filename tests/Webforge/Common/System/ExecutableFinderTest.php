@@ -4,7 +4,7 @@ namespace Webforge\Common\System;
 
 use Webforge\Configuration\Configuration;
 
-class ExecutableFinderTest extends \Webforge\Code\Test\Base {
+class ExecutableFinderTest extends \Webforge\Common\TestCase {
   
   public function setUp() {
     $this->chainClass = 'Webforge\\Common\\System\\ExecutableFinder';
@@ -25,7 +25,7 @@ class ExecutableFinderTest extends \Webforge\Code\Test\Base {
     $rarBin = $this->finder->getExecutable('rar');
     
     $this->assertInstanceOf('Webforge\Common\System\File', $rarBin);
-    $this->assertFileEquals($this->rar, $rarBin);
+    $this->assertFileEquals($this->rar, (string) $rarBin);
   }
 
   public function testFindsExecutableReturnsBool() {
