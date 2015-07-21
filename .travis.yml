@@ -8,9 +8,7 @@ branches:
   only:
     - master
 
-before_script:
-  - composer self-update
-  - COMPOSER_ROOT_VERSION=dev-master composer install
+install: composer install
 
 script: phpunit --coverage-clover build/logs/clover.xml
 
