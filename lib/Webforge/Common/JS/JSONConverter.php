@@ -2,9 +2,8 @@
 
 namespace Webforge\Common\JS;
 
-use Webforge\Common\System\File;
-use Webforge\Common\String AS S;
 use Seld\JsonLint\JsonParser;
+use Webforge\Common\System\File;
 
 class JSONConverter {
   
@@ -20,7 +19,7 @@ class JSONConverter {
     
 
   /**
-   * @return Webforge\Common\JS\JSONConverter
+   * @return \Webforge\Common\JS\JSONConverter
    */
   public static function create() {
     return new static();
